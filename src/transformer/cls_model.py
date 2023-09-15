@@ -9,7 +9,7 @@ import torchmetrics
 import pickle
 import pytorch_lightning as pl
 from pytorch_lightning import seed_everything
-from focal_loss.focal_loss import FocalLoss
+#from focal_loss.focal_loss import FocalLoss
 from imblearn.metrics import macro_averaged_mean_absolute_error
 from scipy.stats import median_abs_deviation
 from sklearn.metrics import f1_score, cohen_kappa_score
@@ -497,7 +497,7 @@ class Transformer_PSY(Transformer_CLS):
             reduction = "mean"
         if self.hparams.loss_type == "mae":
             self.loss_fn = nn.L1Loss(reduction=reduction)
-        elif self.hparams.loss_type == "entropy":
+        elif self.hparams.loss_type == "entropy" or self.hparams.loss_type == "focal" :
             self.loss_fn = nn.CrossEntropyLoss()
         elif self.hparams.loss_type == "ordinal":
             self.loss_fn = CumulativeLinkLoss()

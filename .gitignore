@@ -3,5 +3,5 @@ dummy_attempt/dummy_data.json
 dummy_attempt/test_env
 dummy_attempt/dummy_dataset.pkl
 dummy_attempt/lifeEnv
-dummy_attempt/__pycache__
+dummy_attempt/__pycache__/
 

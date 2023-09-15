@@ -11,8 +11,8 @@ from pytorch_lightning import seed_everything
 import os
 from pathlib import Path
 import logging
-
 """Custom code"""
+import src.transformer
 from src.transformer.transformer_utils import *
 from src.transformer.transformer import CLS_DecoderS, Transformer, MaskedLanguageModel
 
@@ -58,48 +58,54 @@ class TransformerEncoder(pl.LightningModule):
             threshold=0.2,
             num_classes=self.num_outputs,
             average="macro",
-            mdmc_average="global",
+            #mdmc_average="global",
             ignore_index=0,
             top_k=top_k,
+            task="multiclass",
         )
 
         self.train_precision = torchmetrics.Precision(
             threshold=0.2,
             num_classes=self.num_outputs,
             average="macro",
-            mdmc_average="global",
+            #mdmc_average="global",
             ignore_index=0,
             top_k=top_k,
+            task="multiclass",
         )
 
         self.train_recall = torchmetrics.Recall(
             threshold=0.2,
             num_classes=self.num_outputs,
             average="macro",
-            mdmc_average="global",
+            #mdmc_average="global",
             ignore_index=0,
             top_k=top_k,
+            task="multiclass",
         )
 
         self.train_f1 = torchmetrics.F1Score(
             threshold=0.2,
             num_classes=self.num_outputs,
             average="macro",
-            mdmc_average="global",
+            #mdmc_average="global",
             ignore_index=0,
             top_k=top_k,
+            task="multiclass",
         )
 
         self.train_cls_acc = torchmetrics.Accuracy(
             threshold=0.5,
             num_classes=3,
-            average="macro"
+            average="macro",
+            task="multiclass",
         )
 
         self.train_cls_f1 = torchmetrics.F1Score(
             threshold=0.5,
             num_classes=3,
             average="macro",
+            task="multiclass",
         )
 
         ##### VALIDATION
@@ -107,48 +113,54 @@ class TransformerEncoder(pl.LightningModule):
             threshold=0.2,
             num_classes=self.num_outputs,
             average="macro",
-            mdmc_average="global",
+            #mdmc_average="global",
             ignore_index=0,
             top_k=top_k,
+            task="multiclass",
         )
 
         self.val_precision = torchmetrics.Precision(
             threshold=0.2,
             num_classes=self.num_outputs,
             average="macro",
-            mdmc_average="global",
+            #mdmc_average="global",
             ignore_index=0,
             top_k=top_k,
+            task="multiclass",
         )
 
         self.val_recall = torchmetrics.Recall(
             threshold=0.2,
             num_classes=self.num_outputs,
             average="macro",
-            mdmc_average="global",
+            #mdmc_average="global",
             ignore_index=0,
             top_k=top_k,
+            task="multiclass",
         )
 
         self.val_f1 = torchmetrics.F1Score(
             threshold=0.2,
             num_classes=self.num_outputs,
             average="macro",
-            mdmc_average="global",
+            #mdmc_average="global",
             ignore_index=0,
             top_k=top_k,
+            task="multiclass",
         )
 
         self.val_cls_acc = torchmetrics.Accuracy(
             threshold=0.5,
             num_classes=3,
-            average="macro"
+            average="macro",
+            task="multiclass",
         )
 
         self.val_cls_f1 = torchmetrics.F1Score(
             threshold=0.5,
             num_classes=3,
             average="macro",
+            task="multiclass",
         )
         
     def forward(self, batch):
@@ -195,12 +207,12 @@ class TransformerEncoder(pl.LightningModule):
         self.last_global_step = self.global_step
         seed_everything(self.hparams.seed + self.trainer.current_epoch)
 
-    def training_epoch_end(self, output):
+    def on_train_epoch_end(self, output):
         """On Epoch End"""
         if self.hparams.attention_type == "performer":
             self.transformer.redraw_projection_matrix(-1)
 
-    def validation_epoch_end(self, outputs) -> None:
+    def on_validation_epoch_end(self, outputs) -> None:
         """Save the embedding on validation epoch end"""
         return super().validation_epoch_end(outputs)
 
