@@ -1,9 +1,9 @@
 *.DS_Store
 l2v
-*__pycache__*
-*/data/
-*egg-info*
-*pkl
+**__pycache__**
+**/data/
+**egg-info**
+*.pkl
 *.json
 !*cfg.json
-projects/dutch*
+projects/dutch**
