@@ -17,7 +17,7 @@ class PersonDocument:
     sentences: List[List[str]]
     abspos: List[int]
     age: List[float]
-    timecut_pos: int  # What is this?
+    timecut_pos: int = None  # What is this?
     segment: Optional[List[int]] = None
     background: Optional["Background"] = None
     shuffled: bool = False
@@ -46,8 +46,8 @@ class Background:
             return [
                 x.origin,
                 x.gender,
-                f"MONTH_{x.birth_month}",
-                f"YEAR_{x.birth_year}",
+                x.birth_month,
+                x.birth_year,
             ]
 
 

@@ -1,7 +1,9 @@
-dummy_attempt/lightning_logs
-dummy_attempt/dummy_data.json
-dummy_attempt/test_env
-dummy_attempt/dummy_dataset.pkl
-dummy_attempt/lifeEnv
-dummy_attempt/__pycache__/
-
+*.DS_Store
+l2v
+*__pycache__*
+*/data/
+*egg-info*
+*pkl
+*.json
+!*cfg.json
+projects/dutch*

@@ -1,6 +1,6 @@
 
 import warnings
-from pytorch_lightning import Callback, Trainer, profiler
+from pytorch_lightning import Callback, Trainer #, profiler
 import importlib
 from typing import Any
 
@@ -30,12 +30,12 @@ def import_from(module: str, name: str) -> Any:
 
 import json
 
-class DetailedProfiler(profiler.SimpleProfiler):
+# class DetailedProfiler(profiler.SimpleProfiler):
 
-    def summary(self) -> str:
-        with open("recorded_durations.json", "w") as f:
-            json.dump(self.recorded_durations, f)
-        return super().summary()
+#     def summary(self) -> str:
+#         with open("recorded_durations.json", "w") as f:
+#             json.dump(self.recorded_durations, f)
+#         return super().summary()
 
 
 

@@ -1,0 +1,11 @@
+PRIMARY_KEY = 'RINPERSOON'
+#MUNICIPALIY = 'municipality'
+GENDER = 'gender'
+BIRTH_MONTH = 'birth_month'
+BIRTH_YEAR = 'birth_year'
+DAYS_SINCE = 'daysSinceFirstEvent'
+AGE = 'age'
+ORIGIN = 'birth_municipality'
+TIME_COLUMNS = [AGE, DAYS_SINCE, 'year', 'month']
+IGNORE_COLUMNS = ['educDet', 'incomeYearly', 'inc'] 
+DELIMITER = ';'

@@ -26,7 +26,9 @@ import pandas as pd
 
 from src.utils import stringify
 
-DATA_ROOT = Path.home() / ... / "data"
+#DATA_ROOT = Path.home() / ... / "data"
+DATA_ROOT = Path.home() / "Documents/GitHub/tanzir_life2vec/LifeToVec" / "data"
+
 T = TypeVar("T")
 
 

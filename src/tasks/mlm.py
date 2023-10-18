@@ -32,6 +32,14 @@ class MLM(Task):
     # MLM Specific params
     mask_ratio: float = 0.30
     smart_masking: bool = False
+    vocabulary = None
+    found_max_len = -1
+    found_min_len = 1000000000
+    
+    def set_vocabulary(self, vocabulary=None):
+      if vocabulary is None:
+        vocabulary = self.datamodule.vocabulary
+      self.vocabulary = vocabulary
 
     def encode_document(self, document: PersonDocument) -> "MLMEncodedDocument":
 
@@ -58,11 +66,13 @@ class MLM(Task):
         abspos_expanded = expand([0] + document.abspos)
         age_expanded = expand([0.0] + document.age)
         assert document.segment is not None
-        segment_expanded = expand([1] + document.segment)
+        segment_expanded = expand([0] + document.segment)
 
         flat_sentences = np.concatenate(sentences)
 
-        token2index = self.datamodule.vocabulary.token2index
+        token2index = self.vocabulary.token2index
+      
+
         unk_id = token2index["[UNK]"]
 
         #print(flat_sentences[500:550])
@@ -70,7 +80,8 @@ class MLM(Task):
         masked_sentences, masked_indx, masked_tokens = self.mlm_mask(token_ids.copy())
 
         length = len(token_ids)
-
+        self.found_max_len = max(self.found_max_len, length)
+        self.found_min_len = min(self.found_min_len, length)
         input_ids = np.zeros((4, self.max_length))
         input_ids[0, :length] = masked_sentences
         input_ids[1, :length] = abspos_expanded
@@ -107,7 +118,8 @@ class MLM(Task):
         vocabulary excluding GENERAL.
         """
 
-        vocab = self.datamodule.vocabulary.vocab()
+        vocab = self.vocabulary.vocab()
+        
         no_general = vocab.CATEGORY != "GENERAL"
         token_groups = (
             vocab.loc[no_general]
@@ -137,7 +149,7 @@ class MLM(Task):
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Mask out the tokens for mlm training"""
 
-        vocabulary = self.datamodule.vocabulary
+        vocabulary = self.vocabulary
         token2index = vocabulary.token2index
 
         unk_id = token2index["[UNK]"]
