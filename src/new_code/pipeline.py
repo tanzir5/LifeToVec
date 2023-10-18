@@ -24,6 +24,7 @@ PRIMARY_KEY = "primary_key"
 DATA_FILE_PATHS = 'data_file_paths'
 DATA_DIRECTORY_PATHS = 'data_directory_paths'
 VOCAB_NAME = 'vocab_name'
+VOCAB_WRITE_PATH = 'vocab_write_path'
 
 def read_cfg(path):
   with open(path, 'r') as file:
