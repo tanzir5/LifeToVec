@@ -37,7 +37,13 @@ def get_raw_file_name(path):
 def create_vocab(vocab_write_path, data_file_paths, vocab_name, primary_key):
   data_files = []
   for path in data_file_paths:
-    data_files.append(DataFile(path, get_raw_file_name(path), primary_key))
+    data_files.append(
+      DataFile(
+        path=path, 
+        name=get_raw_file_name(path), 
+        primary_key=primary_key,
+      )
+    )
 
   custom_vocab = CustomVocabulary(name=vocab_name, data_files=data_files)
   vocab = custom_vocab.vocab()
