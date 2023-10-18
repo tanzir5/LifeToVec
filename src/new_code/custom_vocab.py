@@ -100,7 +100,7 @@ class CustomVocabulary(Vocabulary):
         """Filters the tokens by count, sorts them lexicographically for each source,
         and computes the voculary with the field labels as categories.
         """
-        if self.vocab_df not None:
+        if self.vocab_df is not None:
           return self.vocab_df
 
         general = pd.DataFrame({"TOKEN": self.general_tokens, "CATEGORY": "GENERAL"})
