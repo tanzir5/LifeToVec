@@ -65,7 +65,7 @@ def process_and_write(
     elif np.issubdtype(df[column].dtype, np.number):
       print("quantizing column", column)
       df[column] = quantize(df[column])
-  df.to_csv(file_path)
+  df.to_csv(file_path, index=False)
 
 if __name__ == "__main__":
   CFG_PATH = sys.argv[1]
