@@ -35,6 +35,7 @@ def get_raw_file_name(path):
   return path.split("/")[-1].split(".")[0]
 
 def create_vocab(vocab_write_path, data_file_paths, vocab_name):
+  data_files = []
   for path in data_file_paths:
     data_files.append(DataFile(path, get_raw_file_name(path)))
 
