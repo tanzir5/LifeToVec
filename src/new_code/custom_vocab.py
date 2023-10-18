@@ -15,11 +15,11 @@ from src.data_new.decorators import save_pickle, save_tsv
 from src.data_new.serialize import DATA_ROOT
 from src.data_new.sources.base import TokenSource
 
-from src.new_code.constants import BIRTH_YEAR, BIRTH_MONTH, ORIGIN, GENDER, DELIMITER, TIME_COLUMNS, PRIMARY_KEY, IGNORE_COLUMNS
+from src.new_code.constants import BIRTH_YEAR, BIRTH_MONTH, ORIGIN, GENDER, DELIMITER, TIME_COLUMNS, IGNORE_COLUMNS
 
 class DataFile():
   
-  def __init__(self, path, name=None):
+  def __init__(self, path, primary_key, name=None):
     self.path = path
     self.name = name
     self.df = None
@@ -45,7 +45,7 @@ class DataFile():
       if (
         column not in TIME_COLUMNS and 
         column not in IGNORE_COLUMNS and 
-        column != PRIMARY_KEY
+        column != primary_key
       ):
         unique_tokens_by_category.append(
           self._get_unique_tokens_for_column(

@@ -34,10 +34,10 @@ def read_cfg(path):
 def get_raw_file_name(path):
   return path.split("/")[-1].split(".")[0]
 
-def create_vocab(vocab_write_path, data_file_paths, vocab_name):
+def create_vocab(vocab_write_path, data_file_paths, vocab_name, primary_key):
   data_files = []
   for path in data_file_paths:
-    data_files.append(DataFile(path, get_raw_file_name(path)))
+    data_files.append(DataFile(path, get_raw_file_name(path), primary_key))
 
   custom_vocab = CustomVocabulary(name=vocab_name, data_files=data_files)
   vocab = custom_vocab.vocab()
@@ -127,5 +127,6 @@ if __name__ == "__main__":
   create_vocab(
     data_file_paths=data_file_paths,
     vocab_write_path=vocab_write_path,
-    vocab_name=vocab_name
+    vocab_name=vocab_name,
+    primary_key=primary_key,
   )
