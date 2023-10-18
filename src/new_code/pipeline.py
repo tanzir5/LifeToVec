@@ -1,9 +1,9 @@
-# from src.new_code.custom_vocab import CustomVocabulary
-# from src.new_code.custom_vocab import DataFile
-# from src.new_code.create_person_dict import CreatePersonDict
-# from src.tasks.mlm import MLM
-# from src.data_new.types import PersonDocument, Background
-# from src.new_code.load_data import CustomDataset
+from src.new_code.custom_vocab import CustomVocabulary
+from src.new_code.custom_vocab import DataFile
+from src.new_code.create_person_dict import CreatePersonDict
+from src.tasks.mlm import MLM
+from src.data_new.types import PersonDocument, Background
+from src.new_code.load_data import CustomDataset
  
 import os
 import json
