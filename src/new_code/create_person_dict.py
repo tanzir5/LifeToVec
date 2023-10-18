@@ -1,4 +1,4 @@
-from src.new_code.constants import RIN_PERSOON, GENDER, BIRTH_MONTH, BIRTH_YEAR, ORIGIN, DAYS_SINCE, AGE, DELIMITER, IGNORE_COLUMNS
+from src.new_code.constants import PRIMARY_KEY, GENDER, BIRTH_MONTH, BIRTH_YEAR, ORIGIN, DAYS_SINCE, AGE, DELIMITER, IGNORE_COLUMNS
 from src.data_new.types import Background, PersonDocument
 
 import pandas as pd
@@ -33,7 +33,7 @@ class CreatePersonDict():
       delimiter=DELIMITER
     )
     for index, row in background_df.iterrows():
-      person_id = row[RIN_PERSOON]
+      person_id = row[PRIMARY_KEY]
       person = {
         'person_id': person_id, 
         'background': {
@@ -50,7 +50,7 @@ class CreatePersonDict():
   def format_event_for_tokenization(self, event):
     sentence = []
     for attribute in event.index:
-      if attribute not in [RIN_PERSOON, DAYS_SINCE, AGE]:
+      if attribute not in [PRIMARY_KEY, DAYS_SINCE, AGE]:
         sentence.append(f"{attribute}_{str(event[attribute])}")
     return sentence
 
@@ -91,7 +91,7 @@ class CreatePersonDict():
       df[AGE] = df[AGE].apply(lambda x: self._make_int(x))
       df[DAYS_SINCE] = df[DAYS_SINCE].apply(lambda x: self._make_int(x))
       for _, row in df.iterrows():
-        person_id = row[RIN_PERSOON]
+        person_id = row[PRIMARY_KEY]
         self.people[person_id]['events'].append(row)
     
     for key, value in self.people.items():
