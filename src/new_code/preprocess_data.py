@@ -33,9 +33,11 @@ def quantize(col):
 
   # Perform linear scaling, ignoring NaN values
   scaled_col = col.apply(
-    lambda x: np.round(
-      (
-        (x - current_min) / (current_max - current_min) * (new_max - new_min)
+    lambda x: int(
+      np.round(
+        (
+          (x - current_min) / (current_max - current_min) * (new_max - new_min)
+        )
       ) + new_min
     )  if not pd.isna(x) else x
   )
