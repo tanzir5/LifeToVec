@@ -155,4 +155,8 @@ if __name__ == "__main__":
     2. create life_sequence json files
     3. read one by one and run MLM to get mlmencoded documents
   '''
-  create_vocab(data_file_paths, vocab_write_path, vocab_name)
+  create_vocab(
+    data_file_paths=data_file_paths,
+    vocab_write_path=vocab_write_path,
+    vocab_name=vocab_name
+  )
