@@ -21,8 +21,7 @@ import sys
 '''
 
 PRIMARY_KEY = "primary_key"
-DATA_FILE_PATHS = 'data_file_paths'
-DATA_DIRECTORY_PATHS = 'data_directory_paths'
+DATA_DIRECTORY_PATH = 'data_directory_path'
 VOCAB_NAME = 'vocab_name'
 VOCAB_WRITE_PATH = 'vocab_write_path'
 
@@ -111,32 +110,6 @@ def get_data_files_from_directory(directory, primary_key):
         data_files.append(current_file_path)
   return data_files
 
-
-
-def get_data_files_from_directories(data_directory_paths, primary_key):
-  data_file_paths = []
-  for directory in data_directory_paths:
-    data_file_paths.extend(
-      get_data_files_from_directory(directory, primary_key)
-    )
-  return data_file_paths
-
-def get_data_file_paths(cfg, primary_key):
-  data_file_paths = []
-  if DATA_FILE_PATHS in cfg:
-    data_file_paths.extend(cfg[DATA_FILE_PATHS])
-    for file in data_file_paths:
-      if primary_key not in get_column_names(file):
-        raise ValueError(f"{file} does not have primary key {primary_key}")
-
-  if DATA_DIRECTORY_PATHS in cfg:
-    data_file_paths.extend(
-      get_data_files_from_directories(cfg[DATA_DIRECTORY_PATHS], primary_key)
-    )
-
-  return data_file_paths
-  
-
 if __name__ == "__main__":
   CFG_PATH = sys.argv[1]
   print(CFG_PATH)
@@ -147,7 +120,7 @@ if __name__ == "__main__":
   # sequence_write_path = cfg[SEQUENCE_WRITE_PATH]
   vocab_write_path = cfg[VOCAB_WRITE_PATH]
   vocab_name = cfg[VOCAB_NAME]
-  data_file_paths = get_data_file_paths(cfg, primary_key)
+  data_file_paths = get_data_files_from_directory(cfg[DATA_DIRECTORY_PATH], primary_key)
 
   print(len(data_file_paths))
   '''
