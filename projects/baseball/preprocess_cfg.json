@@ -1,0 +1,7 @@
+{
+  "SOURCE": "projects/baseball/raw_data/",
+  "DEST": "projects/baseball/data/",
+  "IMMUTABLE_COLS": ["playerID", "yearID"],
+  "PRIMARY_KEY": "playerID",
+  "RESTRICTED_SUBSTRINGS": ["name"]
+}

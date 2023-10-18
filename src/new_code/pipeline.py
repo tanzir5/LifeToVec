@@ -4,7 +4,8 @@ from src.new_code.create_person_dict import CreatePersonDict
 from src.tasks.mlm import MLM
 from src.data_new.types import PersonDocument, Background
 from src.new_code.load_data import CustomDataset
- 
+from src.new_code.utils import get_column_names
+
 import os
 import json
 import torch
@@ -95,11 +96,6 @@ def create_vocab(vocab_write_path, data_file_paths, vocab_name):
 # with open('dummy_people_dataset.pkl', 'wb') as file:
 #     pickle.dump(dataset, file)
 
-def get_column_names(csv_file):
-  with open(csv_file, 'r', newline='') as file:
-    reader = csv.reader(file)
-    header = next(reader)
-    return header
 
 def get_data_files_from_directory(directory, primary_key):
   data_files = []

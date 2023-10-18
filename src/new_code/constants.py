@@ -9,3 +9,4 @@ ORIGIN = 'birth_municipality'
 TIME_COLUMNS = [AGE, DAYS_SINCE, 'year', 'month']
 IGNORE_COLUMNS = ['educDet', 'incomeYearly', 'inc'] 
 DELIMITER = ','
+MISSING = 'MISSING'

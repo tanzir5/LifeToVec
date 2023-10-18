@@ -1,7 +1,5 @@
 {
-  "data_directory_paths": [
-    "projects/baseball/data/"
-  ],
+  "data_directory_path": "projects/baseball/data/",
   "sequence_write_path": "projects/baseball/gen_data/players.json",
   "vocab_write_path": "projects/baseball/gen_data/vocab.json",
   "primary_key": "playerID",
