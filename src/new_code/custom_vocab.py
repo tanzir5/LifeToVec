@@ -23,6 +23,7 @@ class DataFile():
     self.path = path
     self.name = name
     self.df = None
+    self.primary_key = primary_key
 
   def _get_df(self):
     if self.df is None:
@@ -45,7 +46,7 @@ class DataFile():
       if (
         column not in TIME_COLUMNS and 
         column not in IGNORE_COLUMNS and 
-        column != primary_key
+        column != self.primary_key
       ):
         unique_tokens_by_category.append(
           self._get_unique_tokens_for_column(
