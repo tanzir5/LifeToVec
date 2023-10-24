@@ -7,9 +7,9 @@ import pandas as pd
 import sys
 import shutil
 from src.new_code.utils import get_column_names
-from src.new_code.constants import MISSING
+from src.new_code.constants import MISSING, DAYS_SINCE_FIRST, FIRST_EVENT_TIME
 
-
+TIME_KEY = 'TIME_KEY'
 SOURCE = 'SOURCE'
 DEST = 'DEST'
 IMMUTABLE_COLS = 'IMMUTABLE_COLS'
@@ -50,16 +50,25 @@ def quantize(col):
   )
   return scaled_col
 
+all_cols = {}
+
 def process_and_write(
   file_path,
   primary_key,
   immutable_cols,
   restricted_substrings,
   max_unique_per_column,
+  time_key,
+  first_event_time,
 ):
   print(file_path)
   print("*"*100)
   df = pd.read_csv(file_path)
+  col_for_drop_check = DAYS_SINCE_FIRST
+  if DAYS_SINCE_FIRST not in df.columns:
+    col_for_drop_check = time_key
+  
+  df.dropna(subset=[col_for_drop_check], inplace=True)
   for column in df.columns:
     if column == primary_key or column in immutable_cols: 
       continue
@@ -76,6 +85,14 @@ def process_and_write(
       print("quantizing column", column)
       df[column] = quantize(df[column])
   df.fillna(value=MISSING, inplace=True)
+  for col in df.columns:
+    if col not in all_cols:
+      all_cols[col] = []
+    all_cols[col].append(file_path)
+  if DAYS_SINCE_FIRST not in df.columns:
+    df[DAYS_SINCE_FIRST] = df[time_key].apply(lambda x: x-first_event_time)
+    df.drop(columns=[time_key], inplace=True)
+
   df.to_csv(file_path, index=False)
 
 if __name__ == "__main__":
@@ -89,6 +106,11 @@ if __name__ == "__main__":
   primary_key = cfg[PRIMARY_KEY]
   restricted_substrings = cfg[RESTRICTED_SUBSTRINGS]
   max_unique_per_column = cfg[MAX_UNIQUE_PER_COLUMN]
+  if TIME_KEY in cfg:
+    time_key = cfg[TIME_KEY]
+    first_event_time = cfg[FIRST_EVENT_TIME]
+  else:
+    time_key = None
   # Use shutil.copytree() to copy the entire directory recursively
   if os.path.exists(destination_dir):
     shutil.rmtree(destination_dir)
@@ -96,11 +118,19 @@ if __name__ == "__main__":
   for root, dirs, files in os.walk(destination_dir):
     for filename in fnmatch.filter(files, '*.csv'):
       current_file_path = os.path.join(root, filename)
-      if primary_key in get_column_names(current_file_path):
+      cols = get_column_names(current_file_path)
+      if (
+        primary_key in cols and (DAYS_SINCE_FIRST in cols or time_key in cols)
+      ):
         process_and_write(
           file_path=current_file_path,
           primary_key=primary_key,
           immutable_cols=immutable_cols,
           restricted_substrings=restricted_substrings,
           max_unique_per_column=max_unique_per_column,
+          time_key=time_key,
+          first_event_time=first_event_time
         )
+
+  for col in all_cols:
+    print(col, ":", len(all_cols[col]), "\n", all_cols[col])

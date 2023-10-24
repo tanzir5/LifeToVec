@@ -4,5 +4,7 @@
   "IMMUTABLE_COLS": ["playerID", "yearID"],
   "PRIMARY_KEY": "playerID",
   "RESTRICTED_SUBSTRINGS": ["name"],
-  "MAX_UNIQUE_PER_COLUMN": 1100
+  "MAX_UNIQUE_PER_COLUMN": 1100,
+  "TIME_KEY": "yearID",
+  "FIRST_EVENT_TIME": 1875
 }
