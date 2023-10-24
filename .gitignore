@@ -1,7 +1,7 @@
 *.DS_Store
 env_l2v
 **__pycache__**
-**/data/
+projects/**/*data*/
 **egg-info**
 *.pkl
 *.json
