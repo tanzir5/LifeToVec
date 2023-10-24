@@ -14,13 +14,25 @@ SOURCE = 'SOURCE'
 DEST = 'DEST'
 IMMUTABLE_COLS = 'IMMUTABLE_COLS'
 PRIMARY_KEY= 'PRIMARY_KEY'
-MAX_UNIQUE_PER_COLUMN = 1100
+MAX_UNIQUE_PER_COLUMN = "MAX_UNIQUE_PER_COLUMN"
 RESTRICTED_SUBSTRINGS = 'RESTRICTED_SUBSTRINGS'
 # Define source and destination directories
 def read_cfg(path):
   with open(path, 'r') as file:
     cfg = json.load(file)
   return cfg  
+
+def bucketize(x, current_min, current_max, new_min, new_max):
+  try:
+    return int(
+      np.round(
+        (
+          (x - current_min) / (current_max - current_min) * (new_max - new_min)
+        )
+      ) + new_min
+    )
+  except Exception as e:
+    return MISSING
 
 def quantize(col):
   # Find the current min and max values, ignoring NaN values
@@ -29,17 +41,12 @@ def quantize(col):
   
   # Define the desired range
   new_min = 1
-  new_max = max(current_max, 100)
-
+  new_max = min(current_max, 100)
+  assert(current_min != current_max)
   # Perform linear scaling, ignoring NaN values
   scaled_col = col.apply(
-    lambda x: int(
-      np.round(
-        (
-          (x - current_min) / (current_max - current_min) * (new_max - new_min)
-        )
-      ) + new_min
-    )  if not pd.isna(x) else x
+    bucketize, 
+    args=(current_min, current_max, new_min, new_max)
   )
   return scaled_col
 
@@ -47,7 +54,8 @@ def process_and_write(
   file_path,
   primary_key,
   immutable_cols,
-  restricted_substrings
+  restricted_substrings,
+  max_unique_per_column,
 ):
   print(file_path)
   print("*"*100)
@@ -59,7 +67,7 @@ def process_and_write(
       any(item in column for item in restricted_substrings) or 
       (
         df[column].dtype=='object' and 
-        len(df[column].unique()) > MAX_UNIQUE_PER_COLUMN
+        len(df[column].unique()) > max_unique_per_column
       )
     ):
       print("dropping column", column)
@@ -67,6 +75,7 @@ def process_and_write(
     elif np.issubdtype(df[column].dtype, np.number):
       print("quantizing column", column)
       df[column] = quantize(df[column])
+  df.fillna(value=MISSING, inplace=True)
   df.to_csv(file_path, index=False)
 
 if __name__ == "__main__":
@@ -79,6 +88,7 @@ if __name__ == "__main__":
   immutable_cols = cfg[IMMUTABLE_COLS]
   primary_key = cfg[PRIMARY_KEY]
   restricted_substrings = cfg[RESTRICTED_SUBSTRINGS]
+  max_unique_per_column = cfg[MAX_UNIQUE_PER_COLUMN]
   # Use shutil.copytree() to copy the entire directory recursively
   if os.path.exists(destination_dir):
     shutil.rmtree(destination_dir)
@@ -92,4 +102,5 @@ if __name__ == "__main__":
           primary_key=primary_key,
           immutable_cols=immutable_cols,
           restricted_substrings=restricted_substrings,
+          max_unique_per_column=max_unique_per_column,
         )

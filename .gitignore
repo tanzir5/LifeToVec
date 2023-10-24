@@ -1,5 +1,5 @@
 *.DS_Store
-l2v
+env_l2v
 **__pycache__**
 **/data/
 **egg-info**
