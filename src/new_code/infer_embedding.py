@@ -45,7 +45,7 @@ for i in range(0, len(dataset), batch_size):
         outputs = model(batch)
 
     # Append the outputs to the list
-    all_outputs.append(outputs.cpu())  # Move back to CPU if necessary
+    all_outputs.append(outputs)  # Move back to CPU if necessary
     print(type(all_outputs[-1]))
     print(all_outputs[-1])
 
