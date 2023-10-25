@@ -46,7 +46,7 @@ for i in range(0, len(dataset), batch_size):
         outputs = model(batch)
     print(len(outputs))
     print(outputs[0].shape)
-    print(outputs[0].shape)
+    print(outputs[1].shape)
     print("x"*100)
     for j in range(len(batch)):
       primary_id = str(batch['sequence_id'][j])
@@ -56,8 +56,8 @@ for i in range(0, len(dataset), batch_size):
       people_embedding[primary_id] = {}
       people_embedding[primary_id]['cls_emb'] = outputs[1][j].cpu().tolist()
       people_embedding[primary_id]['mean_emb'] = torch.mean(outputs[0][j]).cpu().tolist()
-      print(outputs[j][1].cpu().shape)
-      print(torch.mean(outputs[j][0]).cpu().shape)
+      print(outputs[1][j].cpu().shape)
+      print(torch.mean(outputs[0][j]).cpu().shape)
     # Append the outputs to the list
     # all_outputs.append(outputs)  # Move back to CPU if necessary
     # print(type(all_outputs[-1]))
