@@ -28,7 +28,7 @@ VOCAB_NAME = 'vocab_name'
 VOCAB_WRITE_PATH = 'vocab_write_path'
 TIME_KEY = "TIME_KEY"
 SEQUENCE_WRITE_PATH = "SEQUENCE_WRITE_PATH"
-
+MLM_WRITE_PATH = "MLM_WRITE_PATH"
 def read_cfg(path):
   with open(path, 'r') as file:
     cfg = json.load(file)
@@ -63,51 +63,50 @@ def create_person_sequence(file_paths, custom_vocab, write_path, primary_key):
   )
   creator.generate_people_data(write_path)
 
-  #get rid of columns that are unnecessary
+def generate_mlm_encoded_data(custom_vocab, sequence_path, write_path):
+  #create mlmencoded documents
+  mlm = MLM('baseball_v0', 50)
+  mlm.set_vocabulary(custom_vocab)
+  input_ids = []
+  padding_mask = []
+  target_tokens = []
+  target_pos = []
+  target_cls = []
+  with open(sequence_path, 'r') as f:
+    for line in f:
+      # Parse each line as a JSON-encoded list
+      person_dict = json.loads(line)
+    
+      # Now 'json_data' contains the list from the current line
+      # print(type(person_dict))
+      person_document = PersonDocument(
+        person_id=person_dict['person_id'],
+        sentences=person_dict['sentence'],
+        abspos=person_dict['abspos'],
+        age=person_dict['age'],
+        segment=person_dict['segment'],
+        background=Background(**person_dict['background']),
+      )
+      output = mlm.encode_document(person_document)
+      input_ids.append(output.input_ids)
+      padding_mask.append(output.padding_mask)
+      target_tokens.append(output.target_tokens)
+      target_pos.append(output.target_pos)
+      target_cls.append(output.target_cls)
 
-# #create mlmencoded documents
-# mlm = MLM('dutch_v0', 50)
-# mlm.set_vocabulary(custom_vocab)
-# input_ids = []
-# padding_mask = []
-# target_tokens = []
-# target_pos = []
-# target_cls = []
-# with open(write_path, 'r') as f:
-#   for line in f:
-#     # Parse each line as a JSON-encoded list
-#     person_dict = json.loads(line)
-  
-#     # Now 'json_data' contains the list from the current line
-#     # print(type(person_dict))
-#     person_document = PersonDocument(
-#       person_id=person_dict['person_id'],
-#       sentences=person_dict['sentence'],
-#       abspos=person_dict['abspos'],
-#       age=person_dict['age'],
-#       segment=person_dict['segment'],
-#       background=Background(**person_dict['background']),
-#     )
-#     output = mlm.encode_document(person_document)
-#     input_ids.append(output.input_ids)
-#     padding_mask.append(output.padding_mask)
-#     target_tokens.append(output.target_tokens)
-#     target_pos.append(output.target_pos)
-#     target_cls.append(output.target_cls)
-
-# data = {}
-# data['input_ids'] = torch.tensor(np.array(input_ids))
-# data['padding_mask'] = torch.tensor(np.array(padding_mask))
-# data['target_tokens'] = torch.tensor(np.array(target_tokens))
-# data['target_pos'] = torch.tensor(np.array(target_pos))
-# data['target_cls'] = torch.tensor(np.array(target_cls))
+  data = {}
+  data['input_ids'] = torch.tensor(np.array(input_ids))
+  data['padding_mask'] = torch.tensor(np.array(padding_mask))
+  data['target_tokens'] = torch.tensor(np.array(target_tokens))
+  data['target_pos'] = torch.tensor(np.array(target_pos))
+  data['target_cls'] = torch.tensor(np.array(target_cls))
 
 
-# print(torch.max(data['input_ids'][:,3]))
-# print(data['input_ids'].shape)
-# dataset = CustomDataset(data)
-# with open('dummy_people_dataset.pkl', 'wb') as file:
-#     pickle.dump(dataset, file)
+  print(torch.max(data['input_ids'][:,3]))
+  print(data['input_ids'].shape)
+  dataset = CustomDataset(data)
+  with open(write_path, 'wb') as file:
+      pickle.dump(dataset, file)
 
 
 def get_data_files_from_directory(directory, primary_key):
@@ -134,6 +133,7 @@ if __name__ == "__main__":
   vocab_write_path = cfg[VOCAB_WRITE_PATH]
   vocab_name = cfg[VOCAB_NAME]
   time_key = cfg[TIME_KEY]
+  mlm_write_path = cfg[MLM_WRITE_PATH]
   data_file_paths = get_data_files_from_directory(
     cfg[DATA_DIRECTORY_PATH], primary_key
   )
@@ -144,16 +144,21 @@ if __name__ == "__main__":
     2. create life_sequence json files
     3. read one by one and run MLM to get mlmencoded documents
   '''
-  custom_vocab = None
-  '''custom_vocab = create_vocab(
+  #custom_vocab = None
+  custom_vocab = create_vocab(
     data_file_paths=data_file_paths,
     vocab_write_path=vocab_write_path,
     vocab_name=vocab_name,
     primary_key=primary_key,
-  )'''
-  create_person_sequence(
-    file_paths=data_file_paths, 
+  )
+  # create_person_sequence(
+  #   file_paths=data_file_paths, 
+  #   custom_vocab=custom_vocab, 
+  #   write_path=sequence_write_path,
+  #   primary_key=primary_key,
+  # )
+  generate_mlm_encoded_data(
     custom_vocab=custom_vocab, 
-    write_path=sequence_write_path,
-    primary_key=primary_key,
+    sequence_path=sequence_write_path, 
+    write_path=mlm_write_path
   )
