@@ -218,16 +218,16 @@ class TransformerEncoder(pl.LightningModule):
     def on_train_epoch_end(self):
         """On Epoch End"""
         #if self.trainer.accelerator_connector._distrib_type in (DistributedType.DDP, DistributedType.DDP_SPAWN):
-        total_train_loss = self.trainer.lightning_module.all_gather(total_train_loss)
-        total_mlm_loss = self.trainer.lightning_module.all_gather(total_mlm_loss)
-        total_cls_loss = self.trainer.lightning_module.all_gather(total_cls_loss)
+        # total_train_loss = self.trainer.lightning_module.all_gather(total_train_loss)
+        # total_mlm_loss = self.trainer.lightning_module.all_gather(total_mlm_loss)
+        # total_cls_loss = self.trainer.lightning_module.all_gather(total_cls_loss)
 
         # Sum results from all GPUs
-        total_train_loss = sum(total_train_loss)
-        total_mlm_loss = sum(total_train_loss)
-        total_cls_loss = sum(total_train_loss)
+        # total_train_loss = sum(total_train_loss)
+        # total_mlm_loss = sum(total_train_loss)
+        # total_cls_loss = sum(total_train_loss)
         print(f'Total training,mlm,cls loss after epoch {self.current_epoch}\n:') 
-        print(f'{total_train_loss:.4f}, {total_mlm_loss:.4f}, {total_cls_loss:.4f}')
+        print(f'{self.total_train_loss:.4f}, {self.total_mlm_loss:.4f}, {self.total_cls_loss:.4f}')
 
         self.total_train_loss = 0.0
         self.total_mlm_loss = 0.0
