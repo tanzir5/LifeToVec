@@ -89,7 +89,7 @@ class CustomVocabulary(Vocabulary):
         default_factory=lambda: (1820, 2023)  # inclusive
     )
     origin_range: Tuple[int, int] = field(
-        default_factory=lambda: (1, 200) # inclusive
+        default_factory=lambda: (1, 2) # inclusive
     )
     min_token_count: int = 1000 
     min_token_count_field: Dict[str, int] = field(default_factory=dict)

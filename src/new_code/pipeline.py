@@ -55,7 +55,11 @@ def create_vocab(vocab_write_path, data_file_paths, vocab_name, primary_key):
 
 def create_person_sequence(file_paths, custom_vocab, write_path, primary_key):
   #create person json files
-  creator = CreatePersonDict(file_paths, custom_vocab, primary_key)
+  creator = CreatePersonDict(
+    file_paths=file_paths, 
+    primary_key=primary_key, 
+    vocab=custom_vocab,
+  )
   creator.generate_people_data(write_path)
 
   #get rid of columns that are unnecessary
