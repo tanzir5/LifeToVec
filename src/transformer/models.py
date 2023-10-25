@@ -207,7 +207,7 @@ class TransformerEncoder(pl.LightningModule):
         self.last_global_step = self.global_step
         seed_everything(self.hparams.seed + self.trainer.current_epoch)
 
-    def on_train_epoch_end(self, output):
+    def on_train_epoch_end(self):
         """On Epoch End"""
         if self.hparams.attention_type == "performer":
             self.transformer.redraw_projection_matrix(-1)
