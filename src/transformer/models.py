@@ -50,6 +50,10 @@ class TransformerEncoder(pl.LightningModule):
         # 3. METRICS
         self.init_metrics()
 
+        self.total_train_loss = 0.0
+        self.total_mlm_loss = 0.0
+        self.total_cls_loss = 0.0
+
     def init_metrics(self):
         ##### TRAIN
         top_k = 5 if self.num_outputs == self.hparams.vocab_size else 1
@@ -190,7 +194,6 @@ class TransformerEncoder(pl.LightningModule):
         self.log("train/loss_cls", cls_loss.detach(), on_step=True, on_epoch=True)
 
         loss = self.cls_w * cls_loss + self.mlm_w * mlm_loss
-        print(f'Training loss, cls, mlm: {loss:.4f}, {cls_loss}, {mlm_loss}')
 
         ## 3. METRICS
         if (self.global_step + 1) % (self.trainer.log_every_n_steps) == 0:
@@ -202,6 +205,9 @@ class TransformerEncoder(pl.LightningModule):
                 on_step=True,
                 on_epoch=True,
             )
+        self.total_train_loss += loss.item()  # Accumulate the total loss
+        self.total_mlm_loss += mlm_loss.item()
+        self.total_cls_loss += cls_loss.item()
         return loss
 
     def train_epoch_start(self, *args):
@@ -211,8 +217,24 @@ class TransformerEncoder(pl.LightningModule):
 
     def on_train_epoch_end(self):
         """On Epoch End"""
+        if self.trainer.use_ddp:
+            total_train_loss = self.trainer.lightning_module.all_gather(total_train_loss)
+            total_mlm_loss = self.trainer.lightning_module.all_gather(total_mlm_loss)
+            total_cls_loss = self.trainer.lightning_module.all_gather(total_cls_loss)
+
+        # Sum results from all GPUs
+        total_train_loss = sum(total_train_loss)
+        total_mlm_loss = sum(total_train_loss)
+        total_cls_loss = sum(total_train_loss)
+        print(f'Total training,mlm,cls loss after epoch {self.current_epoch}\n:') 
+        print(f'{total_train_loss:.4f}, {total_mlm_loss:.4f}, {total_cls_loss:.4f}')
+
+        self.total_train_loss = 0.0
+        self.total_mlm_loss = 0.0
+        self.total_cls_loss = 0.0
         if self.hparams.attention_type == "performer":
             self.transformer.redraw_projection_matrix(-1)
+
 
     def on_validation_epoch_end(self, outputs) -> None:
         """Save the embedding on validation epoch end"""
