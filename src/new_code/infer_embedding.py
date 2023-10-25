@@ -30,6 +30,7 @@ batch_size = 32
 #dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 all_outputs = []
+people_embedding = {}
 for i in range(0, len(dataset), batch_size):
     # Move the batch to GPU if available
     batch = dataset[i:i+batch_size]
@@ -44,12 +45,18 @@ for i in range(0, len(dataset), batch_size):
     with torch.no_grad():
         outputs = model(batch)
 
+    for j in range(len(batch)):
+      primary_id = batch['sequence_id'][j]
+      people_embedding[primary_id]['cls'] = outputs[j][1].cpu()
+      people_embedding[primary_id]['mean'] = torch.mean(outputs[j][0].cpu())
+      print(people_embedding[primary_id]['cls'].shape)
+      print(people_embedding[primary_id]['mean'].shape)
     # Append the outputs to the list
-    all_outputs.append(outputs)  # Move back to CPU if necessary
-    print(type(all_outputs[-1]))
-    print(all_outputs[-1])
+    # all_outputs.append(outputs)  # Move back to CPU if necessary
+    # print(type(all_outputs[-1]))
+    # print(all_outputs[-1])
 
 # Concatenate the outputs along the batch dimension
-all_outputs = torch.cat(all_outputs, dim=0)
+# all_outputs = torch.cat(all_outputs, dim=0)
 
 # 'all_outputs' now contains the model's predictions or outputs for the entire dataset
