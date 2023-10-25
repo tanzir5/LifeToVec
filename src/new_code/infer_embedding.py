@@ -34,9 +34,12 @@ for i in range(0, len(dataset), batch_size):
     # Move the batch to GPU if available
     batch = dataset[i:i+batch_size]
     if torch.cuda.is_available():
+        batch['original_sequence'] = batch['original_sequence'].to('cuda')
         batch['input_ids'] = batch['input_ids'].to('cuda')
         batch['padding_mask'] = batch['padding_mask'].to('cuda')
-        
+        batch['target_tokens'] = batch['target_tokens'].to('cuda')
+        batch['target_pos'] = batch['target_pos'].to('cuda')
+        batch['target_cls'] = batch['target_cls'].to('cuda')
     # Pass the batch through the model
     with torch.no_grad():
         outputs = model(batch)
