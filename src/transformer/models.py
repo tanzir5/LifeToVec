@@ -195,6 +195,7 @@ class TransformerEncoder(pl.LightningModule):
 
         loss = self.cls_w * cls_loss + self.mlm_w * mlm_loss
 
+        self.log("loss_total", loss.detach(), on_step=True, on_epoch=True)
         ## 3. METRICS
         if (self.global_step + 1) % (self.trainer.log_every_n_steps) == 0:
             self.log_metrics(
