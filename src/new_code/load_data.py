@@ -17,6 +17,8 @@ class CustomDataset(Dataset):
             "target_pos": self.data["target_pos"][index],
             "target_cls": self.data["target_cls"][index],
         }
+    def eval_mode_on(self):
+      self.data["input_ids"][0] = self.data["original_sequence"]
 '''
 file_path = 'dummy_data.json'
 with open(file_path, "r") as json_file:
