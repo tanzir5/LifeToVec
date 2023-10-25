@@ -211,6 +211,12 @@ class TransformerEncoder(pl.LightningModule):
         """On Epoch End"""
         if self.hparams.attention_type == "performer":
             self.transformer.redraw_projection_matrix(-1)
+    def training_step_end(self, training_step_outputs):
+      gathered = self.all_gather(outputs)
+      if self.global_rank == 0:
+        # print(gathered)
+        loss = sum(output['loss'].mean() for output in gathered) / len(outputs)
+        print("loss value=",loss.item())
 
     def on_validation_epoch_end(self, outputs) -> None:
         """Save the embedding on validation epoch end"""
