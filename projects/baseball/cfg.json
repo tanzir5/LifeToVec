@@ -2,7 +2,7 @@
   "data_directory_path": "projects/baseball/data/",
   "SEQUENCE_WRITE_PATH": "projects/baseball/gen_data/players.json",
   "vocab_write_path": "projects/baseball/gen_data/vocab.json",
-  "MLM_WRITE_PATH": "projects/baseball/gen_data/mlm.json",
+  "MLM_WRITE_PATH": "projects/baseball/gen_data/mlm.pkl",
   "primary_key": "playerID",
   "vocab_name": "baseball_vocab_v0",
   "TIME_KEY": "yearID"
