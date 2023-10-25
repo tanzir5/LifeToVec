@@ -11,6 +11,7 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, index):
         return {
+            "sequence_id": self.data["sequence_id"][index],
             "original_sequence": self.data["original_sequence"][index],
             "input_ids": self.data["input_ids"][index],
             "padding_mask": self.data["padding_mask"][index],
