@@ -51,7 +51,7 @@ class MLM(Task):
         ### CLS TASK
         document, targ_cls = self.cls_task(document)
         ############################################
-        THRESHOLD = 5
+        THRESHOLD = 1
         document.sentences = document.sentences[-THRESHOLD:]
         document.age = document.age[-THRESHOLD:]
         document.abspos = document.abspos[-THRESHOLD:]

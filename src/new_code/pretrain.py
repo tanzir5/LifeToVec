@@ -75,11 +75,11 @@ def get_callbacks():
   
 
 def main():
-  hparams_path = 'dummy_hparams.txt'
+  hparams_path = 'src/new_code/regular_hparams.txt'
   model = TransformerEncoder(read_hparams_from_file(hparams_path))
   callbacks = get_callbacks()
-  trainer = Trainer(accelerator='cpu', callbacks=callbacks)
-  with open('dummy_people_dataset.pkl', 'rb') as file:
+  trainer = Trainer(callbacks=callbacks)
+  with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
     dataset = pickle.load(file)
   # Define your batch size
   batch_size = 32
