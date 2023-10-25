@@ -23,19 +23,18 @@ print("len", len(dataset))
 print(type(dataset))
 print(dataset.data["input_ids"].shape)
 print(dataset.data["original_sequence"].shape)
-#dataset.data["input_ids"][:, 0, :] = dataset.data["original_sequence"]
+dataset.data["input_ids"][:, 0, :] = dataset.data["original_sequence"]
 batch_size = 32
 #dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 all_outputs = []
-for batch in dataloader:
+for i in range(0, len(dataset), batch_size):
     # Move the batch to GPU if available
-    #batch = dataset[i:i+batch_size]
-    print("batch")
-    print(batch)
+    batch = dataset[i:i+batch_size]
     if torch.cuda.is_available():
-        batch = batch.to('cuda')
-
+        batch['input_ids'] = batch['input_ids'].to('cuda')
+        batch['padding_mask'] = batch['padding_mask'].to('cuda')
+        
     # Pass the batch through the model
     with torch.no_grad():
         outputs = model(batch)
