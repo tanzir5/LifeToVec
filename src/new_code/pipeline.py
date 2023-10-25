@@ -147,8 +147,8 @@ if __name__ == "__main__":
     primary_key=primary_key,
   )'''
   create_person_sequence(
-    data_file_paths=data_file_paths, 
+    file_paths=data_file_paths, 
     custom_vocab=custom_vocab, 
-    sequence_write_path=sequence_write_path,
+    write_path=sequence_write_path,
     primary_key=primary_key,
   )
