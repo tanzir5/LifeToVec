@@ -18,7 +18,7 @@ with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
 
 print("len", len(dataset))
 print(type(dataset))
-dataset.data["input_ids"][0] = dataset.data["original_sequence"]
+dataset.data["input_ids"][:][0] = dataset.data["original_sequence"]
 #dataset['input_ids'][0] = dataset['original_sequence']
 dataset=dataset[:10]
 #dataset.eval_mode_on()
