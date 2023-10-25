@@ -100,7 +100,7 @@ def generate_mlm_encoded_data(custom_vocab, sequence_path, write_path):
       target_cls.append(output.target_cls)
 
   data = {}
-  data['sequence_id'] = torch.tensor(np.array(sequence_id))
+  data['sequence_id'] = sequence_id
   data['original_sequence'] = torch.tensor(np.array(original_sequence))
   data['input_ids'] = torch.tensor(np.array(input_ids))
   data['padding_mask'] = torch.tensor(np.array(padding_mask))
