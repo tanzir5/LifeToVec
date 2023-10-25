@@ -65,7 +65,7 @@ def create_person_sequence(file_paths, custom_vocab, write_path, primary_key):
 
 def generate_mlm_encoded_data(custom_vocab, sequence_path, write_path):
   #create mlmencoded documents
-  mlm = MLM('baseball_v0', 100)
+  mlm = MLM('baseball_v0', 2560)
   mlm.set_vocabulary(custom_vocab)
   input_ids = []
   padding_mask = []
