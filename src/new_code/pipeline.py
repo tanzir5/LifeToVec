@@ -65,7 +65,7 @@ def create_person_sequence(file_paths, custom_vocab, write_path, primary_key):
 
 def generate_mlm_encoded_data(custom_vocab, sequence_path, write_path):
   #create mlmencoded documents
-  mlm = MLM('baseball_v0', 100)
+  mlm = MLM('baseball_v0', 7000)
   mlm.set_vocabulary(custom_vocab)
   input_ids = []
   padding_mask = []
@@ -73,7 +73,8 @@ def generate_mlm_encoded_data(custom_vocab, sequence_path, write_path):
   target_pos = []
   target_cls = []
   with open(sequence_path, 'r') as f:
-    for line in f:
+    for i, line in enumerate(f):
+      print(f"done: {i}")
       # Parse each line as a JSON-encoded list
       person_dict = json.loads(line)
     
