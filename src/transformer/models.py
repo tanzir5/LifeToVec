@@ -190,6 +190,8 @@ class TransformerEncoder(pl.LightningModule):
         self.log("train/loss_cls", cls_loss.detach(), on_step=True, on_epoch=True)
 
         loss = self.cls_w * cls_loss + self.mlm_w * mlm_loss
+        print(f'Training loss, cls, mlm: {loss:.4f}, {cls_loss}, {mlm_loss}')
+
         ## 3. METRICS
         if (self.global_step + 1) % (self.trainer.log_every_n_steps) == 0:
             self.log_metrics(
@@ -211,12 +213,12 @@ class TransformerEncoder(pl.LightningModule):
         """On Epoch End"""
         if self.hparams.attention_type == "performer":
             self.transformer.redraw_projection_matrix(-1)
-    def training_step_end(self, training_step_outputs):
+    def training_epoch_end(self, outputs) -> None:
       gathered = self.all_gather(outputs)
       if self.global_rank == 0:
         # print(gathered)
         loss = sum(output['loss'].mean() for output in gathered) / len(outputs)
-        print("loss value=",loss.item())
+        print(loss.item())
 
     def on_validation_epoch_end(self, outputs) -> None:
         """Save the embedding on validation epoch end"""
