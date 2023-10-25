@@ -13,7 +13,7 @@ hparams_path = 'src/new_code/regular_hparams.txt'
 hparams = read_hparams_from_file(hparams_path)
 checkpoint_path = 'projects/baseball/models/model-epoch=09-v1.ckpt'
 model = TransformerEncoder.load_from_checkpoint(checkpoint_path, hparams=hparams)
-
+model = model.transformer
 model.eval()
 devi = str(next(model.parameters()).device)
 
@@ -47,6 +47,7 @@ for i in range(0, len(dataset), batch_size):
     print(len(outputs))
     print(outputs[0].shape)
     print(outputs[1].shape)
+    print(len(batch))
     print("x"*100)
     for j in range(len(batch)):
       primary_id = str(batch['sequence_id'][j])
