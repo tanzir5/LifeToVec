@@ -1,4 +1,4 @@
-from src.new_code.constants import PRIMARY_KEY, GENDER, BIRTH_MONTH, BIRTH_YEAR, ORIGIN, DAYS_SINCE, AGE, DELIMITER, IGNORE_COLUMNS, MISSING
+from src.new_code.constants import PRIMARY_KEY, GENDER, BIRTH_MONTH, BIRTH_YEAR, ORIGIN, DAYS_SINCE_FIRST, AGE, DELIMITER, IGNORE_COLUMNS, MISSING
 from src.data_new.types import Background, PersonDocument
 
 import pandas as pd
@@ -54,7 +54,7 @@ class CreatePersonDict():
   def format_event_for_tokenization(self, event):
     sentence = []
     for attribute in event.index:
-      if attribute not in [PRIMARY_KEY, DAYS_SINCE, AGE]:
+      if attribute not in [PRIMARY_KEY, DAYS_SINCE_FIRST, AGE]:
         sentence.append(f"{attribute}_{str(event[attribute])}")
     return sentence
 
@@ -68,7 +68,7 @@ class CreatePersonDict():
     segments = []
     for event in person['events']:
       sentences.append(self.format_event_for_tokenization(event))
-      abspos.append(event[DAYS_SINCE])
+      abspos.append(event[DAYS_SINCE_FIRST])
       ages.append(event[AGE])
       if len(abspos) > 1 and abspos[-2] == abspos[-1]:
         segments.append(1)
@@ -93,7 +93,7 @@ class CreatePersonDict():
         usecols=lambda column: column not in IGNORE_COLUMNS,
       )
       df[AGE] = df[AGE].apply(lambda x: self._make_int(x))
-      df[DAYS_SINCE] = df[DAYS_SINCE].apply(lambda x: self._make_int(x))
+      df[DAYS_SINCE_FIRST] = df[DAYS_SINCE_FIRST].apply(lambda x: self._make_int(x))
       for _, row in df.iterrows():
         person_id = row[PRIMARY_KEY]
         if person_id in self.people:
@@ -102,7 +102,7 @@ class CreatePersonDict():
     for key, value in self.people.items():
       self.people[key]['events'] = sorted(
         value['events'], 
-        key=lambda x: x[DAYS_SINCE]
+        key=lambda x: x[DAYS_SINCE_FIRST]
       )
       sentence, abspos, age, segment = self.expand_person(self.people[key])
       self.people[key] = {
