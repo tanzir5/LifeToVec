@@ -41,6 +41,7 @@ class MLM(Task):
         vocabulary = self.datamodule.vocabulary
       self.vocabulary = vocabulary
 
+
     def encode_document(self, document: PersonDocument) -> "MLMEncodedDocument":
 
         prefix_sentence = (
@@ -52,10 +53,23 @@ class MLM(Task):
         document, targ_cls = self.cls_task(document)
         ############################################
         # THRESHOLD = 1
-        # document.sentences = document.sentences[-THRESHOLD:]
-        # document.age = document.age[-THRESHOLD:]
-        # document.abspos = document.abspos[-THRESHOLD:]
-        # document.segment = document.segment[-THRESHOLD:]
+        sentences = [prefix_sentence] + [s + ["[SEP]"] for s in document.sentences]
+        sentence_lengths = [len(x) for x in sentences]
+        total_length = len(prefix_sentence)
+        ok = 0
+        for i in range(len(sentence_lengths)-1, 0, -1):
+          total_length += sentence_lengths[i]
+          if total_length >= self.max_length:
+            break 
+          ok += 1
+
+        THRESHOLD = ok
+
+        document.sentences = document.sentences[-THRESHOLD:]
+        document.age = document.age[-THRESHOLD:]
+        document.abspos = document.abspos[-THRESHOLD:]
+        document.segment = document.segment[-THRESHOLD:]
+        
         sentences = [prefix_sentence] + [s + ["[SEP]"] for s in document.sentences]
         sentence_lengths = [len(x) for x in sentences]
 
