@@ -5,6 +5,7 @@ from src.tasks.mlm import MLM
 from src.data_new.types import PersonDocument, Background
 from src.new_code.load_data import CustomDataset
 from src.new_code.utils import get_column_names
+from src.new_code.constants import DAYS_SINCE_FIRST
 
 import os
 import json
@@ -109,7 +110,7 @@ def create_person_sequence(file_paths, custom_vocab, write_path, primary_key):
 #     pickle.dump(dataset, file)
 
 
-def get_data_files_from_directory(directory, primary_key, time_key):
+def get_data_files_from_directory(directory, primary_key):
   data_files = []
   for root, dirs, files in os.walk(directory):
     for filename in fnmatch.filter(files, '*.csv'):
@@ -117,7 +118,7 @@ def get_data_files_from_directory(directory, primary_key, time_key):
       columns = get_column_names(current_file_path)
       if (
         primary_key in columns and
-        ("background" in filename or time_key in columns)  
+        ("background" in filename or DAYS_SINCE_FIRST in columns)  
       ): 
         data_files.append(current_file_path)
   return data_files
@@ -134,7 +135,7 @@ if __name__ == "__main__":
   vocab_name = cfg[VOCAB_NAME]
   time_key = cfg[TIME_KEY]
   data_file_paths = get_data_files_from_directory(
-    cfg[DATA_DIRECTORY_PATH], primary_key, time_key
+    cfg[DATA_DIRECTORY_PATH], primary_key
   )
 
   print(len(data_file_paths))
