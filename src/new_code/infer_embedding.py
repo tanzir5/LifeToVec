@@ -46,7 +46,7 @@ for i in range(0, len(dataset), batch_size):
         outputs = model(batch)
 
     for j in range(len(batch)):
-      primary_id = batch['sequence_id'][j]
+      primary_id = str(batch['sequence_id'][j][0])
       print(primary_id)
       print(type(primary_id))
       print("*"*100)
