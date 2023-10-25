@@ -17,6 +17,7 @@ with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
   dataset = pickle.load(file)
 
 print("len", len(dataset))
+print(type(dataset))
 dataset=dataset[:10]
 dataset.eval_mode_on()
 
