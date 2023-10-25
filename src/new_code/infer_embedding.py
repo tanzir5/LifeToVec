@@ -47,21 +47,19 @@ for i in range(0, len(dataset), batch_size):
         x=batch["input_ids"].long(),
         padding_mask=batch["padding_mask"].long(),
       )
-    print(len(outputs))
-    print(outputs[0].shape)
-    print(outputs[1].shape)
-    print(len(batch['sequence_id']))
+    print(f"len(outputs) = {len(outputs)}")
+    print(f"batch length = {len(batch['sequence_id'])}")
     print("x"*100)
-    for j in range(len(batch)):
+    for j in range(len(batch['sequence_id'])):
       primary_id = str(batch['sequence_id'][j])
-      print(primary_id)
-      print(type(primary_id))
-      print("*"*100)
       people_embedding[primary_id] = {}
-      people_embedding[primary_id]['cls_emb'] = outputs[1][j].cpu().tolist()
-      people_embedding[primary_id]['mean_emb'] = torch.mean(outputs[0][j]).cpu().tolist()
-      print(outputs[1][j].cpu().shape)
-      print(torch.mean(outputs[0][j]).cpu().shape)
+      cls_emb = outputs[j][0].cpu()
+      mean_emb = torch.mean(outputs[j],0).cpu()
+      people_embedding[primary_id]['cls_emb'] = cls_emb.tolist()
+      people_embedding[primary_id]['mean_emb'] = mean_emb.tolist()
+      print(f"cls_emb dim = {cls_emb.shape}")
+      print(f"mean_emb dim = {mean_emb.shape}")
+      
     # Append the outputs to the list
     # all_outputs.append(outputs)  # Move back to CPU if necessary
     # print(type(all_outputs[-1]))
