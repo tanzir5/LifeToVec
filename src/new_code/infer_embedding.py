@@ -6,7 +6,7 @@ from src.new_code.load_data import CustomDataset
 from src.new_code.pretrain import read_hparams_from_file
 from torch.utils.data import DataLoader
 import torch
-
+import json
 import pickle
 
 hparams_path = 'src/new_code/regular_hparams.txt'
@@ -47,10 +47,10 @@ for i in range(0, len(dataset), batch_size):
 
     for j in range(len(batch)):
       primary_id = batch['sequence_id'][j]
-      people_embedding[primary_id]['cls'] = outputs[j][1].cpu()
-      people_embedding[primary_id]['mean'] = torch.mean(outputs[j][0].cpu())
-      print(people_embedding[primary_id]['cls'].shape)
-      print(people_embedding[primary_id]['mean'].shape)
+      people_embedding[primary_id]['cls_emb'] = outputs[j][1].cpu().tolist()
+      people_embedding[primary_id]['mean_emb'] = torch.mean(outputs[j][0]).cpu().tolist()
+      print(outputs[j][1].cpu().shape)
+      print(torch.mean(outputs[j][0]).cpu().shape)
     # Append the outputs to the list
     # all_outputs.append(outputs)  # Move back to CPU if necessary
     # print(type(all_outputs[-1]))
@@ -60,3 +60,6 @@ for i in range(0, len(dataset), batch_size):
 # all_outputs = torch.cat(all_outputs, dim=0)
 
 # 'all_outputs' now contains the model's predictions or outputs for the entire dataset
+file_path = 'projects/baseball/gen_data/embedding.json'
+with open(file_path, 'w') as json_file:
+    json.dump(people_embedding, json_file)
