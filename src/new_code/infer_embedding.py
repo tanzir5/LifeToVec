@@ -23,5 +23,8 @@ print(dataset.data["original_sequence"].shape)
 dataset.data["input_ids"][:, 0, :] = dataset.data["original_sequence"]
 #dataset['input_ids'][0] = dataset['original_sequence']
 dataset=dataset[:10]
+print(dataset.data["input_ids"].shape)
+print(dataset.data["original_sequence"].shape)
+print(dataset.data["sequence_id"].shape)
 #dataset.eval_mode_on()
 
