@@ -47,6 +47,9 @@ for i in range(0, len(dataset), batch_size):
 
     for j in range(len(batch)):
       primary_id = batch['sequence_id'][j]
+      print(primary_id)
+      print(type(primary_id))
+      print("*"*100)
       people_embedding[primary_id]['cls_emb'] = outputs[j][1].cpu().tolist()
       people_embedding[primary_id]['mean_emb'] = torch.mean(outputs[j][0]).cpu().tolist()
       print(outputs[j][1].cpu().shape)
