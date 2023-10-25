@@ -72,7 +72,7 @@ def read_hparams_from_file(file_path):
 def get_callbacks():
   callbacks = [
     ModelCheckpoint(
-      dirpath='project/baseball/models',
+      dirpath='projects/baseball/models',
       filename='model-{epoch:02d}',
       monitor='train_loss',
       save_top_k=5  # Save all models
