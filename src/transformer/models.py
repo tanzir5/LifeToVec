@@ -217,10 +217,10 @@ class TransformerEncoder(pl.LightningModule):
 
     def on_train_epoch_end(self):
         """On Epoch End"""
-        if self.trainer.use_ddp:
-            total_train_loss = self.trainer.lightning_module.all_gather(total_train_loss)
-            total_mlm_loss = self.trainer.lightning_module.all_gather(total_mlm_loss)
-            total_cls_loss = self.trainer.lightning_module.all_gather(total_cls_loss)
+        #if self.trainer.accelerator_connector._distrib_type in (DistributedType.DDP, DistributedType.DDP_SPAWN):
+        total_train_loss = self.trainer.lightning_module.all_gather(total_train_loss)
+        total_mlm_loss = self.trainer.lightning_module.all_gather(total_mlm_loss)
+        total_cls_loss = self.trainer.lightning_module.all_gather(total_cls_loss)
 
         # Sum results from all GPUs
         total_train_loss = sum(total_train_loss)
