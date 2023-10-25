@@ -4,6 +4,7 @@ import src.transformer
 from src.transformer.models import TransformerEncoder
 from src.new_code.load_data import CustomDataset
 from src.new_code.pretrain import read_hparams_from_file
+import pickle
 
 hparams_path = 'src/new_code/regular_hparams.txt'
 hparams = read_hparams_from_file(hparams_path)
@@ -15,5 +16,7 @@ model.eval()
 with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
   dataset = pickle.load(file)
 
+print("len", len(dataset))
+dataset=dataset[:10]
 dataset.eval_mode_on()
 
