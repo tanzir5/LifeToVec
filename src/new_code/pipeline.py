@@ -26,6 +26,7 @@ DATA_DIRECTORY_PATH = 'data_directory_path'
 VOCAB_NAME = 'vocab_name'
 VOCAB_WRITE_PATH = 'vocab_write_path'
 TIME_KEY = "TIME_KEY"
+SEQUENCE_WRITE_PATH = "SEQUENCE_WRITE_PATH"
 
 def read_cfg(path):
   with open(path, 'r') as file:
@@ -124,7 +125,7 @@ if __name__ == "__main__":
 
   primary_key = cfg[PRIMARY_KEY]
   # write_path = cfg[WRITE_PATH]
-  # sequence_write_path = cfg[SEQUENCE_WRITE_PATH]
+  sequence_write_path = cfg[SEQUENCE_WRITE_PATH]
   vocab_write_path = cfg[VOCAB_WRITE_PATH]
   vocab_name = cfg[VOCAB_NAME]
   time_key = cfg[TIME_KEY]
