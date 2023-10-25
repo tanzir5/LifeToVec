@@ -7,3 +7,4 @@ projects/**/*data*/
 *.json
 !*cfg.json
 projects/dutch**
+decisions_taken_in_haste.txt

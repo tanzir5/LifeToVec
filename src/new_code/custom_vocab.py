@@ -15,7 +15,7 @@ from src.data_new.decorators import save_pickle, save_tsv
 from src.data_new.serialize import DATA_ROOT
 from src.data_new.sources.base import TokenSource
 
-from src.new_code.constants import BIRTH_YEAR, BIRTH_MONTH, ORIGIN, GENDER, DELIMITER, TIME_COLUMNS, IGNORE_COLUMNS
+from src.new_code.constants import BIRTH_YEAR, BIRTH_MONTH, ORIGIN, GENDER, DELIMITER, TIME_COLUMNS, IGNORE_COLUMNS, MISSING
 
 class DataFile():
   
@@ -83,10 +83,10 @@ class CustomVocabulary(Vocabulary):
         ]
     )
     background_tokens: List[str] = field(
-        default_factory=lambda: [f"{GENDER}_1", f"{GENDER}_2",]
+        default_factory=lambda: [f"{GENDER}_1", f"{GENDER}_2", f"{GENDER}_{MISSING}"]
     )
     year_range: Tuple[int, int] = field(
-        default_factory=lambda: (1, 138)  # inclusive
+        default_factory=lambda: (1820, 2023)  # inclusive
     )
     origin_range: Tuple[int, int] = field(
         default_factory=lambda: (1, 200) # inclusive
@@ -109,14 +109,14 @@ class CustomVocabulary(Vocabulary):
             {"TOKEN": self.background_tokens, "CATEGORY": "BACKGROUND"}
         )
         month = pd.DataFrame(
-            {"TOKEN": [f"{BIRTH_MONTH}_{i}" for i in range(1, 13)], "CATEGORY": BIRTH_MONTH}
+            {"TOKEN": [f"{BIRTH_MONTH}_{i}" for i in range(1, 13)] + [f"{BIRTH_MONTH}_{MISSING}"], "CATEGORY": BIRTH_MONTH}
         )
         year = pd.DataFrame(
             {
                 "TOKEN": [
                     f"{BIRTH_YEAR}_{i}"
                     for i in range(self.year_range[0], self.year_range[1] + 1)
-                ],
+                ] + [f"{BIRTH_YEAR}_{MISSING}"],
                 "CATEGORY": BIRTH_YEAR,
             }
         )
@@ -125,7 +125,7 @@ class CustomVocabulary(Vocabulary):
                 "TOKEN": [
                     f"{ORIGIN}_{i}"
                     for i in range(self.origin_range[0], self.origin_range[1] + 1)
-                ],
+                ] + [f"{ORIGIN}_{MISSING}"],
                 "CATEGORY": ORIGIN,
             }
         )

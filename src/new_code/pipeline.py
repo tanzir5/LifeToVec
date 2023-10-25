@@ -25,6 +25,7 @@ PRIMARY_KEY = "primary_key"
 DATA_DIRECTORY_PATH = 'data_directory_path'
 VOCAB_NAME = 'vocab_name'
 VOCAB_WRITE_PATH = 'vocab_write_path'
+TIME_KEY = "TIME_KEY"
 
 def read_cfg(path):
   with open(path, 'r') as file:
@@ -51,12 +52,12 @@ def create_vocab(vocab_write_path, data_file_paths, vocab_name, primary_key):
     json.dump(custom_vocab.token2index, f)
 
 
+def create_person_sequence(write_path):
+  #create person json files
+  creator = CreatePersonDict(file_paths, custom_vocab)
+  creator.generate_people_data(write_path)
 
-# #create person json files
-# creator = CreatePersonDict(file_paths, custom_vocab)
-# creator.generate_people_data(write_path)
-
-# #get rid of columns that are unnecessary
+  #get rid of columns that are unnecessary
 
 # #create mlmencoded documents
 # mlm = MLM('dutch_v0', 50)
@@ -103,12 +104,16 @@ def create_vocab(vocab_write_path, data_file_paths, vocab_name, primary_key):
 #     pickle.dump(dataset, file)
 
 
-def get_data_files_from_directory(directory, primary_key):
+def get_data_files_from_directory(directory, primary_key, time_key):
   data_files = []
   for root, dirs, files in os.walk(directory):
     for filename in fnmatch.filter(files, '*.csv'):
       current_file_path = os.path.join(root, filename)
-      if primary_key in get_column_names(current_file_path):
+      columns = get_column_names(current_file_path)
+      if (
+        primary_key in columns and
+        ("background" in filename or time_key in columns)  
+      ): 
         data_files.append(current_file_path)
   return data_files
 
@@ -122,7 +127,10 @@ if __name__ == "__main__":
   # sequence_write_path = cfg[SEQUENCE_WRITE_PATH]
   vocab_write_path = cfg[VOCAB_WRITE_PATH]
   vocab_name = cfg[VOCAB_NAME]
-  data_file_paths = get_data_files_from_directory(cfg[DATA_DIRECTORY_PATH], primary_key)
+  time_key = cfg[TIME_KEY]
+  data_file_paths = get_data_files_from_directory(
+    cfg[DATA_DIRECTORY_PATH], primary_key, time_key
+  )
 
   print(len(data_file_paths))
   '''
@@ -136,3 +144,5 @@ if __name__ == "__main__":
     vocab_name=vocab_name,
     primary_key=primary_key,
   )
+
+  create_person_sequence(data_file_paths, sequence_write_path)

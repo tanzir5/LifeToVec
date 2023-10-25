@@ -1,4 +1,4 @@
-from src.new_code.constants import PRIMARY_KEY, GENDER, BIRTH_MONTH, BIRTH_YEAR, ORIGIN, DAYS_SINCE, AGE, DELIMITER, IGNORE_COLUMNS
+from src.new_code.constants import PRIMARY_KEY, GENDER, BIRTH_MONTH, BIRTH_YEAR, ORIGIN, DAYS_SINCE, AGE, DELIMITER, IGNORE_COLUMNS, MISSING
 from src.data_new.types import Background, PersonDocument
 
 import pandas as pd
@@ -32,19 +32,23 @@ class CreatePersonDict():
       dtype=str,
       delimiter=DELIMITER
     )
+    background_df = background_df.fillna(MISSING)
     for index, row in background_df.iterrows():
-      person_id = row[PRIMARY_KEY]
-      person = {
-        'person_id': person_id, 
-        'background': {
-          'origin': f"{ORIGIN}_{row[ORIGIN]}",
-          'gender': f"{GENDER}_{row[GENDER]}",
-          'birth_month': f"{BIRTH_MONTH}_{row[BIRTH_MONTH]}",
-          'birth_year': f"{BIRTH_YEAR}_{row[BIRTH_YEAR]}",     
-        },
-        'events': []
-      }
-      people[person_id] = person
+      try:
+        person_id = row[PRIMARY_KEY]
+        person = {
+          'person_id': person_id, 
+          'background': {
+            'origin': f"{ORIGIN}_{row[ORIGIN]}",
+            'gender': f"{GENDER}_{row[GENDER]}",
+            'birth_month': f"{BIRTH_MONTH}_{row[BIRTH_MONTH]}",
+            'birth_year': f"{BIRTH_YEAR}_{row[BIRTH_YEAR]}",     
+          },
+          'events': []
+        }
+        people[person_id] = person
+      except Exception as e:
+        continue
     return people
 
   def format_event_for_tokenization(self, event):
@@ -92,7 +96,8 @@ class CreatePersonDict():
       df[DAYS_SINCE] = df[DAYS_SINCE].apply(lambda x: self._make_int(x))
       for _, row in df.iterrows():
         person_id = row[PRIMARY_KEY]
-        self.people[person_id]['events'].append(row)
+        if person_id in self.people:
+          self.people[person_id]['events'].append(row)
     
     for key, value in self.people.items():
       self.people[key]['events'] = sorted(

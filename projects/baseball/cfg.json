@@ -3,5 +3,6 @@
   "sequence_write_path": "projects/baseball/gen_data/players.json",
   "vocab_write_path": "projects/baseball/gen_data/vocab.json",
   "primary_key": "playerID",
-  "vocab_name": "baseball_vocab_v0"
+  "vocab_name": "baseball_vocab_v0",
+  "TIME_KEY": "yearID"
 }

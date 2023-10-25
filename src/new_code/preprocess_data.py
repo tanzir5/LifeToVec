@@ -7,7 +7,7 @@ import pandas as pd
 import sys
 import shutil
 from src.new_code.utils import get_column_names
-from src.new_code.constants import MISSING, DAYS_SINCE_FIRST, FIRST_EVENT_TIME
+from src.new_code.constants import MISSING, DAYS_SINCE_FIRST, FIRST_EVENT_TIME, AGE
 
 TIME_KEY = 'TIME_KEY'
 SOURCE = 'SOURCE'
@@ -51,7 +51,7 @@ def quantize(col):
   return scaled_col
 
 all_cols = {}
-
+all_primaries = set()
 def process_and_write(
   file_path,
   primary_key,
@@ -61,9 +61,11 @@ def process_and_write(
   time_key,
   first_event_time,
 ):
+  global all_primaries
   print(file_path)
   print("*"*100)
   df = pd.read_csv(file_path)
+  all_primaries = all_primaries | set(df[primary_key].unique())
   col_for_drop_check = DAYS_SINCE_FIRST
   if DAYS_SINCE_FIRST not in df.columns:
     col_for_drop_check = time_key
@@ -93,6 +95,7 @@ def process_and_write(
     df[DAYS_SINCE_FIRST] = df[time_key].apply(lambda x: x-first_event_time)
     df.drop(columns=[time_key], inplace=True)
 
+  df[AGE] = 0
   df.to_csv(file_path, index=False)
 
 if __name__ == "__main__":
@@ -122,6 +125,7 @@ if __name__ == "__main__":
       if (
         primary_key in cols and (DAYS_SINCE_FIRST in cols or time_key in cols)
       ):
+        print(filename)
         process_and_write(
           file_path=current_file_path,
           primary_key=primary_key,
@@ -134,3 +138,10 @@ if __name__ == "__main__":
 
   for col in all_cols:
     print(col, ":", len(all_cols[col]), "\n", all_cols[col])
+
+  print(f"# of people {len(all_primaries)}")
+  df = pd.read_csv('projects/baseball/data/baseballdatabank-2023.1 2/core/People.csv')
+  people_have = set(df[primary_key].unique())
+  print(f"intersection size = {len(people_have & all_primaries)}")
+  print(f"subtract size 1 = {len(people_have - all_primaries)}")
+  print(f"subtract size 2 = {len(all_primaries & people_have)}")
