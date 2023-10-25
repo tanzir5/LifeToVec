@@ -6,12 +6,12 @@ from src.new_code.load_data import CustomDataset
 from src.new_code.pretrain import read_hparams_from_file
 import pickle
 
-hparams_path = 'src/new_code/regular_hparams.txt'
-hparams = read_hparams_from_file(hparams_path)
-checkpoint_path = 'projects/baseball/models/model-epoch=09-v1.ckpt'
-model = TransformerEncoder.load_from_checkpoint(checkpoint_path, hparams=hparams)
+# hparams_path = 'src/new_code/regular_hparams.txt'
+# hparams = read_hparams_from_file(hparams_path)
+# checkpoint_path = 'projects/baseball/models/model-epoch=09-v1.ckpt'
+# model = TransformerEncoder.load_from_checkpoint(checkpoint_path, hparams=hparams)
 
-model.eval()
+# model.eval()
 
 with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
   dataset = pickle.load(file)
