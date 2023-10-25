@@ -5,6 +5,7 @@ from src.transformer.models import TransformerEncoder
 from src.new_code.load_data import CustomDataset
 from src.new_code.pretrain import read_hparams_from_file
 from torch.utils.data import DataLoader
+import torch
 
 import pickle
 
