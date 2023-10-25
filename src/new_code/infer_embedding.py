@@ -23,7 +23,7 @@ print("len", len(dataset))
 print(type(dataset))
 print(dataset.data["input_ids"].shape)
 print(dataset.data["original_sequence"].shape)
-dataset.data["input_ids"][:, 0, :] = dataset.data["original_sequence"]
+#dataset.data["input_ids"][:, 0, :] = dataset.data["original_sequence"]
 batch_size = 32
 #dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
