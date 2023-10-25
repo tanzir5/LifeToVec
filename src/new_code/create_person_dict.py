@@ -36,21 +36,19 @@ class CreatePersonDict():
     )
     background_df = background_df.fillna(MISSING)
     for index, row in background_df.iterrows():
-      try:
-        person_id = row[self.primary_key]
-        person = {
-          'person_id': person_id, 
-          'background': {
-            'origin': f"{ORIGIN}_{row[ORIGIN]}",
-            'gender': f"{GENDER}_{row[GENDER]}",
-            'birth_month': f"{BIRTH_MONTH}_{row[BIRTH_MONTH]}",
-            'birth_year': f"{BIRTH_YEAR}_{row[BIRTH_YEAR]}",     
-          },
-          'events': []
-        }
-        people[person_id] = person
-      except Exception as e:
-        continue
+      person_id = row[self.primary_key]
+      person = {
+        'person_id': person_id, 
+        'background': {
+          'origin': f"{ORIGIN}_{row[ORIGIN]}",
+          'gender': f"{GENDER}_{row[GENDER]}",
+          'birth_month': f"{BIRTH_MONTH}_{row[BIRTH_MONTH]}",
+          'birth_year': f"{BIRTH_YEAR}_{row[BIRTH_YEAR]}",     
+        },
+        'events': []
+      }
+      people[person_id] = person
+    
     return people
 
   def format_event_for_tokenization(self, event):
