@@ -17,7 +17,8 @@ class CreatePersonDict():
     elif vocab_path is not None:
       return load(vocab_path) # ???
     else:
-      raise ValueError("Both vocab and vocab_path cannot be None")
+      return None
+      #raise ValueError("Both vocab and vocab_path cannot be None")
 
 
   def get_background_file(self, file_paths):
