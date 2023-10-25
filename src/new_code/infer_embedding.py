@@ -43,14 +43,14 @@ for i in range(0, len(dataset), batch_size):
         batch['target_cls'] = batch['target_cls'].to('cuda')
     # Pass the batch through the model
     with torch.no_grad():
-        outputs = model(
-          x=batch["input_ids"].long(),
-          padding_mask=batch["padding_mask"].long(),
-        )
+      outputs = model(
+        x=batch["input_ids"].long(),
+        padding_mask=batch["padding_mask"].long(),
+      )
     print(len(outputs))
     print(outputs[0].shape)
     print(outputs[1].shape)
-    print(len(batch))
+    print(len(batch['sequence_id']))
     print("x"*100)
     for j in range(len(batch)):
       primary_id = str(batch['sequence_id'][j])
