@@ -1,4 +1,4 @@
-PRIMARY_KEY = 'RINPERSOON'
+PRIMARY_KEY = 'PRIMARY_KEY'
 #MUNICIPALIY = 'municipality'
 GENDER = 'gender'
 BIRTH_MONTH = 'birth_month'

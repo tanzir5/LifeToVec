@@ -53,9 +53,9 @@ def create_vocab(vocab_write_path, data_file_paths, vocab_name, primary_key):
     json.dump(custom_vocab.token2index, f)
   return custom_vocab
 
-def create_person_sequence(file_paths, custom_vocab, write_path):
+def create_person_sequence(file_paths, custom_vocab, write_path, primary_key):
   #create person json files
-  creator = CreatePersonDict(file_paths, custom_vocab)
+  creator = CreatePersonDict(file_paths, custom_vocab, primary_key)
   creator.generate_people_data(write_path)
 
   #get rid of columns that are unnecessary
@@ -139,11 +139,16 @@ if __name__ == "__main__":
     2. create life_sequence json files
     3. read one by one and run MLM to get mlmencoded documents
   '''
-  custom_vocab = create_vocab(
+  '''custom_vocab = create_vocab(
     data_file_paths=data_file_paths,
     vocab_write_path=vocab_write_path,
     vocab_name=vocab_name,
     primary_key=primary_key,
-  )
+  )'''
 
-  create_person_sequence(data_file_paths, custom_vocab, sequence_write_path)
+  create_person_sequence(
+    data_file_paths=data_file_paths, 
+    custom_vocab=custom_vocab, 
+    sequence_write_path=sequence_write_path,
+    primary_key=primary_key,
+  )

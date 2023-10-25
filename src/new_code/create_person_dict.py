@@ -1,16 +1,17 @@
-from src.new_code.constants import PRIMARY_KEY, GENDER, BIRTH_MONTH, BIRTH_YEAR, ORIGIN, DAYS_SINCE_FIRST, AGE, DELIMITER, IGNORE_COLUMNS, MISSING
+from src.new_code.constants import GENDER, BIRTH_MONTH, BIRTH_YEAR, ORIGIN, DAYS_SINCE_FIRST, AGE, DELIMITER, IGNORE_COLUMNS, MISSING
 from src.data_new.types import Background, PersonDocument
 
 import pandas as pd
 import json
 
 class CreatePersonDict():
-  def __init__(self, file_paths, vocab=None, vocab_path=None):
+  def __init__(self, file_paths, primary_key, vocab=None, vocab_path=None):
     self.source_paths = file_paths
     self.background_file_path = self.get_background_file(file_paths)
     self.source_paths.remove(self.background_file_path)
     self.vocab = self.get_vocab(vocab, vocab_path)
-    
+    self.primary_key = primary_key
+
   def get_vocab(self, vocab, vocab_path):
     if vocab is not None:
       return vocab
@@ -36,7 +37,7 @@ class CreatePersonDict():
     background_df = background_df.fillna(MISSING)
     for index, row in background_df.iterrows():
       try:
-        person_id = row[PRIMARY_KEY]
+        person_id = row[self.primary_key]
         person = {
           'person_id': person_id, 
           'background': {
@@ -55,7 +56,7 @@ class CreatePersonDict():
   def format_event_for_tokenization(self, event):
     sentence = []
     for attribute in event.index:
-      if attribute not in [PRIMARY_KEY, DAYS_SINCE_FIRST, AGE]:
+      if attribute not in [self.primary_key, DAYS_SINCE_FIRST, AGE]:
         sentence.append(f"{attribute}_{str(event[attribute])}")
     return sentence
 
@@ -96,7 +97,7 @@ class CreatePersonDict():
       df[AGE] = df[AGE].apply(lambda x: self._make_int(x))
       df[DAYS_SINCE_FIRST] = df[DAYS_SINCE_FIRST].apply(lambda x: self._make_int(x))
       for _, row in df.iterrows():
-        person_id = row[PRIMARY_KEY]
+        person_id = row[self.primary_key]
         if person_id in self.people:
           self.people[person_id]['events'].append(row)
     
