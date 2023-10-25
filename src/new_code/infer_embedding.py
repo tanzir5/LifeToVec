@@ -44,7 +44,10 @@ for i in range(0, len(dataset), batch_size):
     # Pass the batch through the model
     with torch.no_grad():
         outputs = model(batch)
-
+    print(len(outputs))
+    print(outputs[0][0].shape)
+    print(outputs[0][1].shape)
+    print("x"*100)
     for j in range(len(batch)):
       primary_id = str(batch['sequence_id'][j])
       print(primary_id)
