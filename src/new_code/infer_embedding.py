@@ -15,7 +15,9 @@ checkpoint_path = 'projects/baseball/models/model-epoch=09-v1.ckpt'
 model = TransformerEncoder.load_from_checkpoint(checkpoint_path, hparams=hparams)
 
 model.eval()
+devi = str(next(model.parameters()).device)
 
+print(f"Model is on {devi}")
 with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
   dataset = pickle.load(file)
 
