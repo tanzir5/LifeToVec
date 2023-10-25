@@ -72,7 +72,7 @@ def generate_mlm_encoded_data(custom_vocab, sequence_path, write_path):
   target_tokens = []
   target_pos = []
   target_cls = []
-  original_sequences = []
+  original_sequence = []
   with open(sequence_path, 'r') as f:
     for i, line in enumerate(f):
       print(f"done: {i}")
@@ -90,7 +90,7 @@ def generate_mlm_encoded_data(custom_vocab, sequence_path, write_path):
         background=Background(**person_dict['background']),
       )
       output = mlm.encode_document(person_document)
-      original_sequences.append(output.original_sequence)
+      original_sequence.append(output.original_sequence)
       input_ids.append(output.input_ids)
       padding_mask.append(output.padding_mask)
       target_tokens.append(output.target_tokens)
@@ -98,7 +98,7 @@ def generate_mlm_encoded_data(custom_vocab, sequence_path, write_path):
       target_cls.append(output.target_cls)
 
   data = {}
-  data['original_sequence'] = torch.tensor(np.array(original_sequences))
+  data['original_sequence'] = torch.tensor(np.array(original_sequence))
   data['input_ids'] = torch.tensor(np.array(input_ids))
   data['padding_mask'] = torch.tensor(np.array(padding_mask))
   data['target_tokens'] = torch.tensor(np.array(target_tokens))
