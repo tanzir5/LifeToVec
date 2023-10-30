@@ -91,7 +91,7 @@ def generate_mlm_encoded_data(
       print(f"done: {i}")
       # Parse each line as a JSON-encoded list
       person_dict = json.loads(line)
-      if len(person_dict['sentence'] < min_event_threshold)
+      if len(person_dict['sentence'] < min_event_threshold):
         continue
       # Now 'json_data' contains the list from the current line
       # print(type(person_dict))
