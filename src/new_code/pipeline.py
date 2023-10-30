@@ -103,9 +103,10 @@ def generate_mlm_encoded_data(
         segment=person_dict['segment'],
         background=Background(**person_dict['background']),
       )
-      if person_document is None:
-        continue
+
       output = mlm.encode_document(person_document)
+      if output is None:
+        continue
       sequence_id.append(output.sequence_id)
       original_sequence.append(output.original_sequence)
       input_ids.append(output.input_ids)
