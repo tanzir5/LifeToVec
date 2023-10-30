@@ -5,7 +5,7 @@ from src.tasks.mlm import MLM
 from src.data_new.types import PersonDocument, Background
 from src.new_code.load_data import CustomDataset
 from src.new_code.utils import get_column_names
-from src.new_code.constants import DAYS_SINCE_FIRST
+from src.new_code.constants import DAYS_SINCE_FIRST, INF
 
 import os
 import json
