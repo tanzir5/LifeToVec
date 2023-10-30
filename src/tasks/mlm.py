@@ -38,7 +38,7 @@ class MLM(Task):
     found_min_len = 1000000000
     time_range = [-INF, INF]
 
-    def set_time_range(self, time_range: Tuple(int,int)):
+    def set_time_range(self, time_range: Tuple[int, int]):
       self.time_range = time_range
     
     def set_vocabulary(self, vocabulary=None):
