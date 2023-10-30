@@ -29,6 +29,9 @@ VOCAB_WRITE_PATH = 'vocab_write_path'
 TIME_KEY = "TIME_KEY"
 SEQUENCE_WRITE_PATH = "SEQUENCE_WRITE_PATH"
 MLM_WRITE_PATH = "MLM_WRITE_PATH"
+TIME_RANGE_START = "TIME_RANGE_START"
+TIME_RANGE_END = "TIME_RANGE_END"
+
 def read_cfg(path):
   with open(path, 'r') as file:
     cfg = json.load(file)
