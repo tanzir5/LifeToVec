@@ -11,3 +11,4 @@ IGNORE_COLUMNS = ['educDet', 'incomeYearly', 'inc']
 DELIMITER = ','
 MISSING = 'MISSING'
 FIRST_EVENT_TIME = "FIRST_EVENT_TIME"
+INF = 1e9

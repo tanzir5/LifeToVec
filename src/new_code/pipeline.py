@@ -63,10 +63,17 @@ def create_person_sequence(file_paths, custom_vocab, write_path, primary_key):
   )
   creator.generate_people_data(write_path)
 
-def generate_mlm_encoded_data(custom_vocab, sequence_path, write_path):
+def generate_mlm_encoded_data(
+  custom_vocab,
+  sequence_path,
+  write_path,
+  time_range=None,
+):
   #create mlmencoded documents
   mlm = MLM('baseball_v0', 1000)
   mlm.set_vocabulary(custom_vocab)
+  if time_range:
+    mlm.set_time_range(time_range)
   input_ids = []
   padding_mask = []
   target_tokens = []
@@ -129,6 +136,15 @@ def get_data_files_from_directory(directory, primary_key):
         data_files.append(current_file_path)
   return data_files
 
+def get_time_range(cfg):
+  time_range = -INF, +INF
+  if TIME_RANGE_START in cfg:
+    time_range = (cfg[TIME_RANGE_START], time_range[1])
+  if TIME_RANGE_END in cfg:
+    time_range = (time_range[0], cfg[TIME_RANGE_END])
+  return time_Range
+
+
 if __name__ == "__main__":
   CFG_PATH = sys.argv[1]
   print(CFG_PATH)
@@ -167,5 +183,6 @@ if __name__ == "__main__":
   generate_mlm_encoded_data(
     custom_vocab=custom_vocab, 
     sequence_path=sequence_write_path, 
-    write_path=mlm_write_path
+    write_path=mlm_write_path,
+    time_range=get_time_range(cfg),
   )

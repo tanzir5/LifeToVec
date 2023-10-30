@@ -11,6 +11,7 @@ from random import shuffle
 
 from src.data_new.types import Background, PersonDocument, EncodedDocument
 from src.tasks.base import Task
+from src.new_code.constants import INF
 
 log = logging.getLogger(__name__)
 
@@ -35,15 +36,32 @@ class MLM(Task):
     vocabulary = None
     found_max_len = -1
     found_min_len = 1000000000
+    time_range = [-INF, INF]
+
+    def set_time_range(self, time_range: Tuple(int,int)):
+      self.time_range = time_range
     
     def set_vocabulary(self, vocabulary=None):
       if vocabulary is None:
         vocabulary = self.datamodule.vocabulary
       self.vocabulary = vocabulary
 
+    def slice_by_time(self, document):
+      if self.time_range == (-INF, +INF):
+        return document
+      lower_bound = np.searchsorted(document.abspos, self.time_range[0], side='left')
+      upper_bound = np.searchsorted(document.abspos, self.time_range[1], side='right')
+      document.sentences = document.sentence[lower_bound:upper_bound]
+      document.age = document.sentence[lower_bound:upper_bound]
+      document.abspos = document.sentence[lower_bound:upper_bound]
+      document.segment = document.sentence[lower_bound:upper_bound]
+      return document
 
     def encode_document(self, document: PersonDocument) -> "MLMEncodedDocument":
-
+        len_before = len(document.sentences)
+        document = self.slice_by_time(document)
+        len_after = len(document.sentences)
+        print(len_before, len_after)
         prefix_sentence = (
             ["[CLS]"] + Background.get_sentence(document.background) + ["[SEP]"]
         )
