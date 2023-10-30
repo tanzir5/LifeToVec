@@ -6,5 +6,5 @@
   "primary_key": "playerID",
   "vocab_name": "baseball_vocab_v0",
   "TIME_KEY": "yearID",
-  "TIME_RANGE_END": 2010
+  "TIME_RANGE_END": 210
 }
