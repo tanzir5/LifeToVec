@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
-
+min_event_threshold = 5
 @dataclass
 class MLM(Task):
     """
@@ -62,6 +62,8 @@ class MLM(Task):
         len_before = len(document.sentences)
         document = self.slice_by_time(document)
         len_after = len(document.sentences)
+        if len(document.sentences) < min_event_threshold:
+          return None
         print(len_before, len_after)
         prefix_sentence = (
             ["[CLS]"] + Background.get_sentence(document.background) + ["[SEP]"]
