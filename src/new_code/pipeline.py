@@ -145,7 +145,7 @@ def get_time_range(cfg):
     time_range = (cfg[TIME_RANGE_START], time_range[1])
   if TIME_RANGE_END in cfg:
     time_range = (time_range[0], cfg[TIME_RANGE_END])
-  return time_Range
+  return time_range
 
 
 if __name__ == "__main__":
