@@ -83,14 +83,15 @@ def get_callbacks():
 
 def main():
   hparams_path = 'src/new_code/regular_hparams.txt'
-  model = TransformerEncoder()
+  hparams = read_hparams_from_file(hparams_path)
+  model = TransformerEncoder(hparams)
   callbacks = get_callbacks()
   trainer = Trainer(callbacks=callbacks, max_epochs=100)
   with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
     dataset = pickle.load(file)
   # Define your batch size
   batch_size = hparams['batch_size']
-
+  
   # Create a data loader
   dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
