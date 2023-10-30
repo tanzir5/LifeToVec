@@ -89,7 +89,7 @@ def main():
   with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
     dataset = pickle.load(file)
   # Define your batch size
-  batch_size = 32
+  batch_size = hparams['batch_size']
 
   # Create a data loader
   dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)

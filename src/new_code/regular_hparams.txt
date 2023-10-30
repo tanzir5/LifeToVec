@@ -1,6 +1,6 @@
 vocab_size: 15822 #this one you should knwo in advance (fix later)
 batch_size: 10
-max_length: 1000
+max_length: 2560
 hidden_size: 280
 hidden_ff: 2210
 hidden_act: "swish"

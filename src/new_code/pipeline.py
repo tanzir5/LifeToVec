@@ -75,7 +75,7 @@ def generate_mlm_encoded_data(
   time_range=None,
 ):
   #create mlmencoded documents
-  mlm = MLM('baseball_v0', 1000)
+  mlm = MLM('baseball_v0', 2560)
   mlm.set_vocabulary(custom_vocab)
   if time_range:
     mlm.set_time_range(time_range)
