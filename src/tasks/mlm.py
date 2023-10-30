@@ -58,7 +58,7 @@ class MLM(Task):
       return document
 
     def encode_document(self, document: PersonDocument) -> "MLMEncodedDocument":
-        print(np.max(document.abspos))
+        print("last year played", 1800+np.max(document.abspos))
         len_before = len(document.sentences)
         document = self.slice_by_time(document)
         len_after = len(document.sentences)
