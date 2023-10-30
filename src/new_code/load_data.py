@@ -8,6 +8,8 @@ class CustomDataset(Dataset):
 
     def __len__(self):
         return self.data["input_ids"].shape[0]
+    def __reduce__(self):
+        return (self.__class__, (self.data,))
 
     def __getitem__(self, index):
         return {

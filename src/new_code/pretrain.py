@@ -83,8 +83,7 @@ def get_callbacks():
 
 def main():
   hparams_path = 'src/new_code/regular_hparams.txt'
-  hparams = read_hparams_from_file(hparams_path)
-  model = TransformerEncoder(hparams)
+  model = TransformerEncoder()
   callbacks = get_callbacks()
   trainer = Trainer(callbacks=callbacks, max_epochs=100)
   with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
