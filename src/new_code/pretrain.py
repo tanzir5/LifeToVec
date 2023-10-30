@@ -72,7 +72,7 @@ def read_hparams_from_file(file_path):
 def get_callbacks():
   callbacks = [
     ModelCheckpoint(
-      dirpath='projects/baseball/models_v1',
+      dirpath='projects/baseball/models_2010',
       filename='model-{epoch:02d}',
       monitor='loss_total',
       save_top_k=2  # Save all models
