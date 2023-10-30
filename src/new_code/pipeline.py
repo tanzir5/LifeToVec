@@ -32,6 +32,8 @@ MLM_WRITE_PATH = "MLM_WRITE_PATH"
 TIME_RANGE_START = "TIME_RANGE_START"
 TIME_RANGE_END = "TIME_RANGE_END"
 
+min_event_threshold = 5
+
 def read_cfg(path):
   with open(path, 'r') as file:
     cfg = json.load(file)
@@ -89,7 +91,8 @@ def generate_mlm_encoded_data(
       print(f"done: {i}")
       # Parse each line as a JSON-encoded list
       person_dict = json.loads(line)
-    
+      if len(person_dict['sentence'] < min_event_threshold)
+        continue
       # Now 'json_data' contains the list from the current line
       # print(type(person_dict))
       person_document = PersonDocument(
