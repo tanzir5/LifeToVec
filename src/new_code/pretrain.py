@@ -72,7 +72,7 @@ def read_hparams_from_file(file_path):
 def get_callbacks():
   callbacks = [
     ModelCheckpoint(
-      dirpath='projects/baseball/models',
+      dirpath='projects/baseball/models_v1',
       filename='model-{epoch:02d}',
       monitor='loss_total',
       save_top_k=2  # Save all models
@@ -85,7 +85,7 @@ def main():
   hparams_path = 'src/new_code/regular_hparams.txt'
   model = TransformerEncoder(read_hparams_from_file(hparams_path))
   callbacks = get_callbacks()
-  trainer = Trainer(callbacks=callbacks, max_epochs=10)
+  trainer = Trainer(callbacks=callbacks, max_epochs=100)
   with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
     dataset = pickle.load(file)
   # Define your batch size
