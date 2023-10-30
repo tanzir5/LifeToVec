@@ -51,10 +51,10 @@ class MLM(Task):
         return document
       lower_bound = np.searchsorted(document.abspos, self.time_range[0], side='left')
       upper_bound = np.searchsorted(document.abspos, self.time_range[1], side='right')
-      document.sentences = document.sentence[lower_bound:upper_bound]
-      document.age = document.sentence[lower_bound:upper_bound]
-      document.abspos = document.sentence[lower_bound:upper_bound]
-      document.segment = document.sentence[lower_bound:upper_bound]
+      document.sentences = document.sentences[lower_bound:upper_bound]
+      document.age = document.age[lower_bound:upper_bound]
+      document.abspos = document.abspos[lower_bound:upper_bound]
+      document.segment = document.segment[lower_bound:upper_bound]
       return document
 
     def encode_document(self, document: PersonDocument) -> "MLMEncodedDocument":
