@@ -92,8 +92,7 @@ def get_nearest_neighbor_e2e(
   """Finds the top k nearest neighbors of each query in corpus.
 
   Args:
-    corpus_embs_dict: this should be a dictionary returned from calling
-      build_index() containing all the database/corpus embeddings.
+    corpus_embs_dict: this is a dictionary mapping corpus pids to embeddings.
     query_embs_dict: similar to corpus_embs_dict but for queries.
     top_k: top k nearest neighbors will be returned.
     check_pids: these special pids, their ranks, and similarity will be 
