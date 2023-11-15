@@ -85,7 +85,7 @@ def get_train_val_dataloaders(dataset, batch_size, train_split=0.8, shuffle=True
   train_size = int(train_split * total_samples)
   val_size = total_samples - train_size
 
-  train_dataset, val_dataset = random_split(my_dataset, [train_size, val_size])
+  train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
 
   return (
     DataLoader(train_dataset, batch_size=batch_size, shuffle=shuffle),
