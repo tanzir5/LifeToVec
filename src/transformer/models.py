@@ -54,6 +54,10 @@ class TransformerEncoder(pl.LightningModule):
         self.total_mlm_loss = 0.0
         self.total_cls_loss = 0.0
 
+        self.total_val_loss = 0.0
+        self.total_val_mlm_loss = 0.0
+        self.total_val_cls_loss = 0.0
+
     def init_metrics(self):
         ##### TRAIN
         top_k = 5 if self.num_outputs == self.hparams.vocab_size else 1
@@ -237,9 +241,15 @@ class TransformerEncoder(pl.LightningModule):
             self.transformer.redraw_projection_matrix(-1)
 
 
-    def on_validation_epoch_end(self, outputs) -> None:
+    def on_validation_epoch_end(self) -> None:
         """Save the embedding on validation epoch end"""
-        return super().validation_epoch_end(outputs)
+        print(f'Total validation,mlm,cls loss after epoch {self.current_epoch}\n:') 
+        print(f'{self.total_val_loss:.4f}, {self.total_val_mlm_loss:.4f}, {self.total_val_cls_loss:.4f}')
+
+        self.total_val_loss = 0.0
+        self.total_val_mlm_loss = 0.0
+        self.total_val_cls_loss = 0.0
+        #return super().validation_epoch_end(outputs)
 
     def validation_step(self, batch, batch_idx):
         """Validation Step"""
@@ -265,6 +275,10 @@ class TransformerEncoder(pl.LightningModule):
             on_step=False,
             on_epoch=True,
         )
+
+        self.total_val_loss += loss.item()  # Accumulate the total loss
+        self.total_val_mlm_loss += mlm_loss.item()
+        self.total_val_cls_loss += cls_loss.item()
 
     def test_step(self, batch, batch_idx):
         ## 1. ENCODER-DECODER
