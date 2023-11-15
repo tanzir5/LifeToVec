@@ -8,10 +8,22 @@ from torch.utils.data import DataLoader
 import torch
 import json
 import pickle
+from torch.utils.data._utils.collate import default_collate
+
+def custom_collate(batch):
+    collated_batch = {}
+    for key in batch[0].keys():
+        # Check if the key is 'sequence_id' and handle it separately
+        if key == 'sequence_id':
+            collated_batch[key] = [item[key] for item in batch]
+        else:
+            collated_batch[key] = default_collate([item[key] for item in batch])
+
+    return collated_batch
 
 hparams_path = 'src/new_code/regular_hparams.txt'
 hparams = read_hparams_from_file(hparams_path)
-checkpoint_path = 'projects/baseball/models/model-epoch=09-v1.ckpt'
+checkpoint_path = 'projects/baseball/models/2010/model-epoch=28.ckpt'
 model = TransformerEncoder.load_from_checkpoint(checkpoint_path, hparams=hparams)
 model = model.transformer
 model.eval()
@@ -21,6 +33,7 @@ print(f"Model is on {devi}")
 with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
   dataset = pickle.load(file)
 
+dataset.set_return_index(True)
 print("len", len(dataset))
 print(type(dataset))
 print(dataset.data["input_ids"].shape)
@@ -28,9 +41,10 @@ print(dataset.data["original_sequence"].shape)
 dataset.data["input_ids"][:, 0, :] = dataset.data["original_sequence"]
 batch_size = 32
 #dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
-dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=custom_collate)
 all_outputs = []
-people_embedding = {}
+people_embedding_cls = {}
+people_embedding_mean = {}
 for i in range(0, len(dataset), batch_size):
     # Move the batch to GPU if available
     batch = dataset[i:i+batch_size]
@@ -52,11 +66,10 @@ for i in range(0, len(dataset), batch_size):
     print("x"*100)
     for j in range(len(batch['sequence_id'])):
       primary_id = str(batch['sequence_id'][j])
-      people_embedding[primary_id] = {}
       cls_emb = outputs[j][0].cpu()
       mean_emb = torch.mean(outputs[j],0).cpu()
-      people_embedding[primary_id]['cls_emb'] = cls_emb.tolist()
-      people_embedding[primary_id]['mean_emb'] = mean_emb.tolist()
+      people_embedding_cls[primary_id] = cls_emb.tolist()
+      people_embedding_mean[primary_id] = mean_emb.tolist()
       print(f"cls_emb dim = {cls_emb.shape}")
       print(f"mean_emb dim = {mean_emb.shape}")
       
@@ -69,6 +82,10 @@ for i in range(0, len(dataset), batch_size):
 # all_outputs = torch.cat(all_outputs, dim=0)
 
 # 'all_outputs' now contains the model's predictions or outputs for the entire dataset
-file_path = 'projects/baseball/gen_data/embedding.json'
+file_path = 'projects/baseball/gen_data/cls_embedding_2010.json'
 with open(file_path, 'w') as json_file:
-    json.dump(people_embedding, json_file)
+    json.dump(people_embedding_cls, json_file)
+
+file_path = 'projects/baseball/gen_data/mean_embedding_2010.json'
+with open(file_path, 'w') as json_file:
+    json.dump(people_embedding_mean, json_file)
