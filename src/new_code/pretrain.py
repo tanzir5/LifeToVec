@@ -10,7 +10,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from torch.utils.data import Dataset, DataLoader
 import pickle
 import torch
-from load_data import CustomDataset
+from src.new_code.load_data import CustomDataset
 
 HOME_PATH = str(Path.home())
 
