@@ -74,7 +74,7 @@ def get_callbacks():
     ModelCheckpoint(
       dirpath='projects/baseball/models/2010',
       filename='model-{epoch:02d}',
-      monitor='loss_total',
+      monitor='val_loss_combined',
       save_top_k=2  # Save all models
     )
   ]
