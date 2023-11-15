@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 import logging
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, random_split
 import pickle
 import torch
 from src.new_code.load_data import CustomDataset
@@ -79,7 +79,18 @@ def get_callbacks():
     )
   ]
   return callbacks
-  
+
+def get_train_val_dataloaders(dataset, batch_size, train_split=0.8, shuffle=True):
+  total_samples = len(dataset)
+  train_size = int(train_split * total_samples)
+  val_size = total_samples - train_size
+
+  train_dataset, val_dataset = random_split(my_dataset, [train_size, val_size])
+
+  return (
+    DataLoader(train_dataset, batch_size=batch_size, shuffle=shuffle),
+    DataLoader(val_dataset, batch_size=batch_size, shuffle=shuffle)
+  )
 
 def main():
   hparams_path = 'src/new_code/regular_hparams.txt'
@@ -89,14 +100,19 @@ def main():
   trainer = Trainer(callbacks=callbacks, max_epochs=100)
   with open('projects/baseball/gen_data/mlm.pkl', 'rb') as file:
     dataset = pickle.load(file)
+
   # Define your batch size
   batch_size = hparams['batch_size']
   
   # Create a data loader
-  dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+  train_dataloader, val_dataloader = get_train_val_dataloaders(
+    dataset=dataset,
+    batch_size=batch_size,
+  )
+  #dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-  print("ok")
-  trainer.fit(model, dataloader)
+  print("training and validation dataloaders are created")
+  trainer.fit(model, train_dataloader, val_dataloader)
 
 
 if __name__ == "__main__":
