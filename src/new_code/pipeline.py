@@ -4,7 +4,7 @@ from src.new_code.create_person_dict import CreatePersonDict
 from src.tasks.mlm import MLM
 from src.data_new.types import PersonDocument, Background
 from src.new_code.load_data import CustomDataset
-from src.new_code.utils import get_column_names
+from src.new_code.utils import get_column_names, print_now
 from src.new_code.constants import DAYS_SINCE_FIRST, INF
 
 import os
@@ -75,7 +75,7 @@ def generate_mlm_encoded_data(
   time_range=None,
 ):
   #create mlmencoded documents
-  mlm = MLM('baseball_v0', 2560)
+  mlm = MLM('dutch_v0', 2560)
   mlm.set_vocabulary(custom_vocab)
   if time_range:
     mlm.set_time_range(time_range)
@@ -88,13 +88,13 @@ def generate_mlm_encoded_data(
   sequence_id = []
   with open(sequence_path, 'r') as f:
     for i, line in enumerate(f):
-      print(f"done: {i}")
+      print_now(f"done: {i}")
       # Parse each line as a JSON-encoded list
       person_dict = json.loads(line)
       if len(person_dict['sentence']) < min_event_threshold:
         continue
       # Now 'json_data' contains the list from the current line
-      # print(type(person_dict))
+      # print_now(type(person_dict))
       person_document = PersonDocument(
         person_id=person_dict['person_id'],
         sentences=person_dict['sentence'],
@@ -125,8 +125,8 @@ def generate_mlm_encoded_data(
   data['target_cls'] = torch.tensor(np.array(target_cls))
 
 
-  print(torch.max(data['input_ids'][:,3]))
-  print(data['input_ids'].shape)
+  print_now(torch.max(data['input_ids'][:,3]))
+  print_now(data['input_ids'].shape)
   dataset = CustomDataset(data)
   with open(write_path, 'wb') as file:
       pickle.dump(dataset, file)
@@ -156,7 +156,7 @@ def get_time_range(cfg):
 
 if __name__ == "__main__":
   CFG_PATH = sys.argv[1]
-  print(CFG_PATH)
+  print_now(CFG_PATH)
   cfg = read_cfg(CFG_PATH)
 
   primary_key = cfg[PRIMARY_KEY]
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     cfg[DATA_DIRECTORY_PATH], primary_key
   )
 
-  print(len(data_file_paths))
+  print_now(len(data_file_paths))
   '''
     1. create vocab
     2. create life_sequence json files
@@ -189,9 +189,9 @@ if __name__ == "__main__":
   #   write_path=sequence_write_path,
   #   primary_key=primary_key,
   # )
-  generate_mlm_encoded_data(
-    custom_vocab=custom_vocab, 
-    sequence_path=sequence_write_path, 
-    write_path=mlm_write_path,
-    time_range=get_time_range(cfg),
-  )
+  # generate_mlm_encoded_data(
+  #   custom_vocab=custom_vocab, 
+  #   sequence_path=sequence_write_path, 
+  #   write_path=mlm_write_path,
+  #   time_range=get_time_range(cfg),
+  # )

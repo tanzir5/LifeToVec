@@ -15,7 +15,7 @@ from src.data_new.decorators import save_pickle, save_tsv
 from src.data_new.serialize import DATA_ROOT
 from src.data_new.sources.base import TokenSource
 
-from src.new_code.constants import BIRTH_YEAR, BIRTH_MONTH, ORIGIN, GENDER, DELIMITER, TIME_COLUMNS, IGNORE_COLUMNS, MISSING
+from src.new_code.constants import BIRTH_YEAR, BIRTH_MONTH, ORIGIN, GENDER, TIME_COLUMNS, IGNORE_COLUMNS, MISSING, DELIMITER
 
 class DataFile():
   
@@ -85,14 +85,14 @@ class CustomVocabulary(Vocabulary):
     background_tokens: List[str] = field(
         default_factory=lambda: [f"{GENDER}_1", f"{GENDER}_2", f"{GENDER}_{MISSING}"]
     )
-    year_range: Tuple[int, int] = field(
-        default_factory=lambda: (1820, 2023)  # inclusive
-    )
-    origin_range: Tuple[int, int] = field(
-        default_factory=lambda: (1, 2) # inclusive
-    )
-    min_token_count: int = 1000 
-    min_token_count_field: Dict[str, int] = field(default_factory=dict)
+    # year_range: Tuple[int, int] = field(
+    #     default_factory=lambda: (1820, 2023)  # inclusive
+    # )
+    # origin_range: Tuple[int, int] = field(
+    #     default_factory=lambda: (1, 2) # inclusive
+    # )
+    # min_token_count: int = 1000 
+    # min_token_count_field: Dict[str, int] = field(default_factory=dict)
 
     vocab_df = None
 
@@ -111,26 +111,26 @@ class CustomVocabulary(Vocabulary):
         month = pd.DataFrame(
             {"TOKEN": [f"{BIRTH_MONTH}_{i}" for i in range(1, 13)] + [f"{BIRTH_MONTH}_{MISSING}"], "CATEGORY": BIRTH_MONTH}
         )
-        year = pd.DataFrame(
-            {
-                "TOKEN": [
-                    f"{BIRTH_YEAR}_{i}"
-                    for i in range(self.year_range[0], self.year_range[1] + 1)
-                ] + [f"{BIRTH_YEAR}_{MISSING}"],
-                "CATEGORY": BIRTH_YEAR,
-            }
-        )
-        origin = pd.DataFrame(
-            {
-                "TOKEN": [
-                    f"{ORIGIN}_{i}"
-                    for i in range(self.origin_range[0], self.origin_range[1] + 1)
-                ] + [f"{ORIGIN}_{MISSING}"],
-                "CATEGORY": ORIGIN,
-            }
-        )
+        # year = pd.DataFrame(
+        #     {
+        #         "TOKEN": [
+        #             f"{BIRTH_YEAR}_{i}"
+        #             for i in range(self.year_range[0], self.year_range[1] + 1)
+        #         ] + [f"{BIRTH_YEAR}_{MISSING}"],
+        #         "CATEGORY": BIRTH_YEAR,
+        #     }
+        # )
+        # origin = pd.DataFrame(
+        #     {
+        #         "TOKEN": [
+        #             f"{ORIGIN}_{i}"
+        #             for i in range(self.origin_range[0], self.origin_range[1] + 1)
+        #         ] + [f"{ORIGIN}_{MISSING}"],
+        #         "CATEGORY": ORIGIN,
+        #     }
+        # )
         
-        vocab_parts = [general, background, month, year, origin]
+        vocab_parts = [general, background]#, month, year, origin]
         for source_file in self.data_files:
           vocab_parts.extend(
             source_file.get_all_unique_tokens_with_category()
@@ -141,3 +141,7 @@ class CustomVocabulary(Vocabulary):
         self.vocab_df['ID'] = self.vocab_df.index
 
         return self.vocab_df  
+
+    def save_vocab(self, path):
+      vocab_df = self.vocab()
+      vocab_df.to_csv(path)

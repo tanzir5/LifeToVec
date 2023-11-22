@@ -1,12 +1,12 @@
 PRIMARY_KEY = 'PRIMARY_KEY'
 #MUNICIPALIY = 'municipality'
 GENDER = 'gender'
-BIRTH_MONTH = 'birth_month'
-BIRTH_YEAR = 'birth_year'
-DAYS_SINCE_FIRST = 'days_since_first'
+BIRTH_MONTH = 'month'
+BIRTH_YEAR = 'year'
+DAYS_SINCE_FIRST = 'daysSinceFirstEvent'
 AGE = 'age'
-ORIGIN = 'origin'
-TIME_COLUMNS = [AGE, DAYS_SINCE_FIRST, 'year', 'month']
+ORIGIN = 'municipality'
+TIME_COLUMNS = [AGE, DAYS_SINCE_FIRST]
 IGNORE_COLUMNS = ['educDet', 'incomeYearly', 'inc'] 
 DELIMITER = ','
 MISSING = 'MISSING'

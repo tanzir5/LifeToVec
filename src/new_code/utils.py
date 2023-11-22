@@ -1,6 +1,10 @@
 import csv
-def get_column_names(csv_file):
-  with open(csv_file, 'r', newline='') as file:
-    reader = csv.reader(file)
-    header = next(reader)
-    return header
+import pandas as pd
+from functools import partial
+
+print_now = partial(print, flush=True)
+
+def get_column_names(csv_file, delimiter=','):
+  df = pd.read_csv(csv_file, delimiter=delimiter, nrows=2)
+  return df.columns
+
