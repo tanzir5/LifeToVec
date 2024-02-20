@@ -135,9 +135,23 @@ class CustomVocabulary(Vocabulary):
           vocab_parts.extend(
             source_file.get_all_unique_tokens_with_category()
           )
+          
+        # debug
+        # total = 0
+        # for part in vocab_parts:
+        #   print(f"{part.iloc[0]}")
+        #   print(f"length = {len(part)}")
+        #   total += len(part)
+        #   print(f"current total = {total}")
+
+        # concatenates the vocab_parts and drops duplicate tokens
+        # then resets the index to be contiguous from 0 to n-1
         self.vocab_df = pd.concat(
           vocab_parts, ignore_index=True
-        ).rename_axis(index="ID")
+        ).drop_duplicates(subset=['TOKEN'], keep='first').reset_index(drop=True)
+        self.vocab_df = self.vocab_df.rename_axis(index="ID")
+        # the following looks unnecessary but the code breaks without this
+        # TODO: Figure out why this is necessary
         self.vocab_df['ID'] = self.vocab_df.index
 
         return self.vocab_df  

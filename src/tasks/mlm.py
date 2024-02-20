@@ -12,12 +12,14 @@ from random import shuffle
 from src.data_new.types import Background, PersonDocument, EncodedDocument
 from src.tasks.base import Task
 from src.new_code.constants import INF
+from src.new_code.utils import print_now
+import copy
 
 log = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
-min_event_threshold = 5
+min_event_threshold = 3
 @dataclass
 class MLM(Task):
     """
@@ -57,14 +59,32 @@ class MLM(Task):
       document.segment = document.segment[lower_bound:upper_bound]
       return document
 
-    def encode_document(self, document: PersonDocument) -> "MLMEncodedDocument":
-        print("last year played", 1800+np.max(document.abspos))
+    def encode_document(
+      self,
+      document: PersonDocument,
+      do_print: bool=False,
+      do_mlm: bool=True,
+    ) -> "MLMEncodedDocument":
+        
+        if do_print:
+          print_now(f"first year active = {int(2017 - (16408 - np.min(document.abspos))/365)})")
+          print_now(f"last year active = {int(2017 - (16408 - np.max(document.abspos))/365)})")
+          print_now(f"min time = {np.min(document.abspos)}, max time = {np.max(document.abspos)}, threshold = {self.time_range}")
+          print_now(f"min event age = {np.min(document.age)}, max event age = {np.max(document.age)}")          
+          print_now(f"background\n{document.background}")
+          print_now(f"all events\n{document.sentences}")
+        
         len_before = len(document.sentences)
         document = self.slice_by_time(document)
         len_after = len(document.sentences)
+        
+        if do_print:
+          print_now(f"len_before {len_before} & len_after {len_after}")
+          
+
         if len(document.sentences) < min_event_threshold:
           return None
-        print(len_before, len_after)
+
         prefix_sentence = (
             ["[CLS]"] + Background.get_sentence(document.background) + ["[SEP]"]
         )
@@ -85,7 +105,9 @@ class MLM(Task):
           ok += 1
 
         THRESHOLD = ok
-
+        if do_print:
+          print_now(f"total sentences = {len(sentence_lengths)}, ok = {ok}")
+        
         document.sentences = document.sentences[-THRESHOLD:]
         document.age = document.age[-THRESHOLD:]
         document.abspos = document.abspos[-THRESHOLD:]
@@ -116,16 +138,11 @@ class MLM(Task):
 
         #print(flat_sentences[500:550])
         token_ids = np.array([token2index.get(x, unk_id) for x in flat_sentences])
-        masked_sentences, masked_indx, masked_tokens = self.mlm_mask(token_ids.copy())
-
         length = len(token_ids)
         self.found_max_len = max(self.found_max_len, length)
         self.found_min_len = min(self.found_min_len, length)
-        input_ids = np.zeros((4, self.max_length))
-        input_ids[0, :length] = masked_sentences
-        input_ids[1, :length] = abspos_expanded
-        input_ids[2, :length] = age_expanded
-        input_ids[3, :length] = segment_expanded
+        if do_print:
+          print(f"length = {length}, max = {self.found_max_len}, min = {self.found_min_len}")
 
         padding_mask = np.repeat(False, self.max_length)
         padding_mask[:length] = True
@@ -137,16 +154,32 @@ class MLM(Task):
         original_sequence[:length] = token_ids
 
         sequence_id = np.array(document.person_id)
+        input_ids = np.zeros((4, self.max_length))
+        input_ids[1, :length] = abspos_expanded
+        input_ids[2, :length] = age_expanded
+        input_ids[3, :length] = segment_expanded
 
-        return MLMEncodedDocument(
+        if do_mlm:
+          masked_sentences, masked_indx, masked_tokens = self.mlm_mask(token_ids.copy())          
+          input_ids[0, :length] = masked_sentences
+
+          return MLMEncodedDocument(
+              sequence_id=sequence_id,
+              input_ids=input_ids,
+              padding_mask=padding_mask,
+              target_tokens=masked_tokens,
+              target_pos=masked_indx,
+              target_cls=targ_cls,
+              original_sequence=original_sequence,
+          )
+        else:
+          #print_now(f"input_ids vs original sequence shape, {input_ids.shape}, {original_sequence.shape}")
+          input_ids[0] = original_sequence
+          return SimpleEncodedDocument(
             sequence_id=sequence_id,
             input_ids=input_ids,
             padding_mask=padding_mask,
-            target_tokens=masked_tokens,
-            target_pos=masked_indx,
-            target_cls=targ_cls,
-            original_sequence=original_sequence,
-        )
+          )
 
     # These could (maybe should?) also be calculated in the __post_init__.
     # Accessing the serialized methods in a parallel context may give problems down
@@ -276,3 +309,10 @@ class MLMEncodedDocument(EncodedDocument[MLM]):
     target_pos: np.ndarray
     target_cls: np.ndarray
     original_sequence: np.ndarray
+
+@dataclass
+class SimpleEncodedDocument(EncodedDocument[MLM]):
+    sequence_id: np.ndarray
+    input_ids: np.ndarray
+    padding_mask: np.ndarray
+    

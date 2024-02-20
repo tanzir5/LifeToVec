@@ -3,13 +3,14 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 
 class CustomDataset(Dataset):
-    def __init__(self, data):
-        self.data = data
-        self.return_index = False
+    def __init__(self, data, mlm_encoded=True):
+      self.data = data
+      self.set_mlm_encoded(mlm_encoded)
 
-    def set_return_index(self, return_index):
-      self.return_index = return_index
-
+    def set_mlm_encoded(self, mlm_encoded):
+      self.mlm_encoded = mlm_encoded
+      self.return_index = not self.mlm_encoded
+    
     def __len__(self):
         return self.data["input_ids"].shape[0]
     def __reduce__(self):
@@ -17,13 +18,20 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, index):
         ret_dict = {            
-            "original_sequence": self.data["original_sequence"][index],
             "input_ids": self.data["input_ids"][index],
             "padding_mask": self.data["padding_mask"][index],
-            "target_tokens": self.data["target_tokens"][index],
-            "target_pos": self.data["target_pos"][index],
-            "target_cls": self.data["target_cls"][index],
         }
+
+        if self.mlm_encoded:
+          ret_dict.update(
+            {
+              "original_sequence": self.data["original_sequence"][index],
+              "target_tokens": self.data["target_tokens"][index],
+              "target_pos": self.data["target_pos"][index],
+              "target_cls": self.data["target_cls"][index],
+            }
+          )
+
         if self.return_index:
           ret_dict["sequence_id"] = self.data["sequence_id"][index]
 

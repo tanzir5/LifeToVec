@@ -344,7 +344,7 @@ class TransformerEncoder(pl.LightningModule):
             "lr_scheduler": {
                 "scheduler": torch.optim.lr_scheduler.OneCycleLR(
                     optimizer, max_lr=self.hparams.learning_rate, 
-                    epochs=30, steps_per_epoch=375,
+                    epochs=300, steps_per_epoch=37500,
                     three_phase=False, pct_start=0.05, max_momentum=self.hparams.beta1,
                     div_factor=30
                 ),  
